@@ -1,5 +1,5 @@
 {
-  "name": "vmix-simple-ctrl",
+  "name": "simple-vmix-switcher-electron",
   "version": "0.1.0",
   "private": true,
   "scripts": {

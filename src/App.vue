@@ -1,53 +1,165 @@
-<template>
-  <v-app>
-    <v-app-bar app color="primary" dark>
-      <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
+<template lang="pug">
+  v-app
+    v-app-bar(app color="primary" dark)
+      div: b Simple vMix switcher
+      v-spacer
+      v-text-field(v-model="host" label="vMix host" @keyup.enter="updateHost").mt-7
+      v-icon(small :class="connected?'green--text':'red--text'" style="text-shadow: 2px 2px 5px rgba(0,0,0,0.5)") fa-circle
 
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
-      </div>
+    v-content
+      v-container(fluid)
+        v-row#program-row(no-gutters)
+          switcher-button(
+            v-for="(input, i) in switcherInputs" :key="`program-row-input-${i}`"
 
-      <v-spacer></v-spacer>
+            :number="i+1"
+            :input="input"
+            :on="input.program"
+            on-color="red lighten-1"
+            @click="program(i+1)"
+          )
 
-      <v-btn href="https://github.com/vuetifyjs/vuetify/releases/latest" target="_blank" text>
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
-    </v-app-bar>
+        hr.my-5
 
-    <v-content>
-      <HelloWorld />
-    </v-content>
-  </v-app>
+        v-row#preview-row(no-gutters)
+          switcher-button(
+            v-for="(input, i) in switcherInputs" :key="`preview-row-input-${i}`"
+
+            :number="i+1"
+            :input="input"
+            :on="input.preview"
+            on-color="green"
+            @click="preview(i+1)"
+          )
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import HelloWorld from './components/HelloWorld.vue'
+import Component from 'vue-class-component'
+import { Watch } from 'vue-property-decorator'
 
-export default Vue.extend({
-  name: 'App',
+import { InputMapper, ApiDataParser } from 'vmix-js-utils'
 
+import vMix, { ConnectionTCP } from 'node-vmix'
+
+import SwitcherButton from './components/SwitcherButton.vue'
+
+@Component({
   components: {
-    HelloWorld
-  },
-
-  data: () => ({
-    //
-  })
+    SwitcherButton
+  }
 })
+export default class App extends Vue {
+  host: string = ''
+
+  // vMix connection
+  vMixConn: ConnectionTCP | null = null
+
+  inputs: any[] = []
+  tallyInfo: any | null = null
+
+  xmlDataInterval: any | null = null
+
+  created() {
+    this.host = this.$store.state.vMixConnection.host
+
+    this.vMixConn = new vMix.ConnectionTCP(this.host)
+  }
+
+  @Watch('connected')
+  onConnectedChanged(val: boolean, oldval: boolean) {
+    const isConnected = val
+
+    console.log('Connected changed', isConnected)
+
+    if (isConnected) {
+      this.vMixConn!.send('SUBSCRIBE TALLY')
+
+      this.vMixConn!.on('tally', (tallySummary: object) => {
+        // console.log('Tally summary:', tallySummary)
+
+        this.tallyInfo = tallySummary
+      })
+
+      this.vMixConn!.on('xmlData', (xmlRawData: string) => {
+        // console.log('RAW', xmlRawData)
+
+        const xmlContent = ApiDataParser.parse(xmlRawData)
+        const inputs = Object.values(
+          InputMapper.mapInputs(InputMapper.extractInputsFromXML(xmlContent), ['title'])
+        )
+
+        this.inputs = inputs
+      })
+
+      this.xmlDataInterval = setInterval(() => {
+        this.vMixConn!.send('XML')
+      }, 5000)
+      this.vMixConn!.send('XML')
+    } else {
+      clearInterval(this.xmlDataInterval)
+      this.xmlDataInterval = null
+    }
+  }
+
+  @Watch('$store.state.vMixConnection.host')
+  onHostChanged(val: string, oldval: string) {
+    this.vMixConn = new vMix.ConnectionTCP(val, { debug: true })
+  }
+
+  get connected() {
+    if (!this.vMixConn) {
+      return false
+    }
+
+    return this.vMixConn!.connected()
+  }
+
+  get switcherInputs() {
+    const inputs = JSON.parse(JSON.stringify(this.inputs.slice(0, 8))).map(
+      (input: any, index: number) => {
+        const number = index + 1
+
+        input.preview = false
+        input.program = false
+
+        return input
+      }
+    )
+
+    if (this.tallyInfo) {
+      if (inputs.length >= this.tallyInfo.program) {
+        inputs[this.tallyInfo.program - 1].program = true
+      }
+      if (inputs.length >= this.tallyInfo.preview) {
+        inputs[this.tallyInfo.preview - 1].preview = true
+      }
+    }
+
+    return inputs
+  }
+
+  preview(inputNumber: number) {
+    this.vMixConn!.send({ Function: 'PreviewInput', Input: inputNumber })
+  }
+
+  program(inputNumber: number) {
+    this.vMixConn!.send({ Function: 'CutDirect', Input: inputNumber })
+  }
+
+  updateHost() {
+    const newHost = this.host
+
+    if (newHost === this.$store.state.vMixConnection.host) {
+      return
+    }
+
+    this.$store.dispatch('setHost', newHost)
+  }
+}
 </script>
+
+<style lang="sass">
+hr
+  border-top: 1px solid #E9E9E9
+</style>

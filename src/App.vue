@@ -3,11 +3,15 @@
     v-app-bar(app color="primary" dark)
       div: b Simple vMix switcher
       v-spacer
-      v-text-field(v-model="host" label="vMix host" @keyup.enter="updateHost").mt-7
-      v-icon(small :class="connected?'green--text':'red--text'" style="text-shadow: 2px 2px 5px rgba(0,0,0,0.5)") fa-circle
+      v-text-field(v-model="host" label="vMix host" @keyup.enter="updateHost" @blur="updateHost").mt-8
+      v-icon#connection-status.ml-2.mt-2(
+        small 
+        :class="connected?'green--text':'red--text'" 
+      ) fa-circle
 
     v-content
-      v-container(fluid)
+      v-container(v-if="!connected") Not yet connected to vMix instance...
+      v-container(fluid v-else)
         v-row#program-row(no-gutters)
           switcher-button(
             v-for="(input, i) in switcherInputs" :key="`program-row-input-${i}`"
@@ -31,7 +35,11 @@
             on-color="green"
             @click="preview(i+1)"
           )
-</template>
+        
+        hr.my-3
+        
+        action-buttons(@exec="execvMixCommand")
+        </template>
 
 <script lang="ts">
 import Vue from 'vue'
@@ -42,10 +50,12 @@ import { InputMapper, ApiDataParser } from 'vmix-js-utils'
 
 import vMix, { ConnectionTCP } from 'node-vmix'
 
+import ActionButtons from './ActionButtons.vue'
 import SwitcherButton from './components/SwitcherButton.vue'
 
 @Component({
   components: {
+    ActionButtons,
     SwitcherButton
   }
 })
@@ -128,23 +138,32 @@ export default class App extends Vue {
     )
 
     if (this.tallyInfo) {
-      if (inputs.length >= this.tallyInfo.program) {
-        inputs[this.tallyInfo.program - 1].program = true
-      }
-      if (inputs.length >= this.tallyInfo.preview) {
-        inputs[this.tallyInfo.preview - 1].preview = true
-      }
+      this.tallyInfo.program.forEach((inputInProgram: number) => {
+        if (inputs.length >= inputInProgram) {
+          inputs[inputInProgram - 1].program = true
+        }
+      })
+
+      this.tallyInfo.preview.forEach((inputInPreview: number) => {
+        if (inputs.length >= inputInPreview) {
+          inputs[inputInPreview - 1].preview = true
+        }
+      })
     }
 
     return inputs
   }
 
   preview(inputNumber: number) {
-    this.vMixConn!.send({ Function: 'PreviewInput', Input: inputNumber })
+    this.execvMixCommand({ Function: 'PreviewInput', Input: inputNumber })
   }
 
   program(inputNumber: number) {
-    this.vMixConn!.send({ Function: 'CutDirect', Input: inputNumber })
+    this.execvMixCommand({ Function: 'CutDirect', Input: inputNumber })
+  }
+
+  execvMixCommand(command: any) {
+    this.vMixConn!.send(command)
   }
 
   updateHost() {
@@ -162,4 +181,7 @@ export default class App extends Vue {
 <style lang="sass">
 hr
   border-top: 1px solid #E9E9E9
+
+#connection-status
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5)
 </style>

@@ -12,6 +12,7 @@
     v-content
       v-container(v-if="!connected") Not yet connected to vMix instance...
       v-container(fluid v-else)
+        div.text-center Program
         v-row#program-row(no-gutters)
           switcher-button(
             v-for="(input, i) in switcherInputs" :key="`program-row-input-${i}`"
@@ -23,8 +24,9 @@
             @click="program(i+1)"
           )
 
-        hr.my-5
+        hr.my-3
 
+        div.text-center Preview
         v-row#preview-row(no-gutters)
           switcher-button(
             v-for="(input, i) in switcherInputs" :key="`preview-row-input-${i}`"

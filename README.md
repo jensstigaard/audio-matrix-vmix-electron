@@ -1,5 +1,7 @@
 # simple-vmix-switcher-electron
 
+Built with Electron. Can be built to Windows, Mac or Linux.
+
 ![Simple vMix Switcher Electron](./readme_assets/overview.png "Application overview")
 
 

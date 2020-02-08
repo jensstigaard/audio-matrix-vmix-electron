@@ -1,5 +1,8 @@
 # simple-vmix-switcher-electron
 
+![Simple vMix Switcher Electron](./readme_assets/overview.png "Application overview")
+
+
 ## Project setup
 ```
 yarn install

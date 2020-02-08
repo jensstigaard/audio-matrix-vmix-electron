@@ -39,7 +39,7 @@
         hr.my-3
         
         action-buttons(@exec="execvMixCommand")
-        </template>
+</template>
 
 <script lang="ts">
 import Vue from 'vue'
@@ -91,6 +91,7 @@ export default class App extends Vue {
         this.tallyInfo = tallySummary
       })
 
+      // Request XML data each 5th second to update input titles
       this.vMixConn!.on('xmlData', (xmlRawData: string) => {
         // console.log('RAW', xmlRawData)
 

@@ -9184,6 +9184,17 @@ vmix-js-utils@^3.2.0:
     xmldom "^0.2.1"
     xpath "^0.0.27"
 
+vmix-js-utils@^3.3.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/vmix-js-utils/-/vmix-js-utils-3.3.0.tgz#b857750cff935a12f791aeb597145d5cdd60ce6d"
+  integrity sha512-ZcikSc1jsbdTrMROp8lVwwUt8hO0SDTlWTWh+YkrPOnGnSkJQ6owsDg/u3sGvzGB8uUJ+ncHCeXKta1mPx1vmA==
+  dependencies:
+    axios "^0.19.2"
+    lodash "^4.17.15"
+    querystring "^0.2.0"
+    xmldom "^0.2.1"
+    xpath "^0.0.27"
+
 void-elements@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/void-elements/-/void-elements-2.0.1.tgz#c066afb582bb1cb4128d60ea92392e94d5e9dbec"
@@ -9235,6 +9246,11 @@ vue-cli-plugin-vuetify@^2.0.4:
   dependencies:
     semver "^6.3.0"
     shelljs "^0.8.3"
+
+vue-directive-long-press@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/vue-directive-long-press/-/vue-directive-long-press-1.1.0.tgz#ef30e3aa846c81b843a28589f288a7496a852d0a"
+  integrity sha512-OHhR4N1kuuKaK87SPmqkcm5Y81HjXgv5DfWr96flIkTYveWps1AozKiNrabsIirq+ibSZWFr3IUr0en+Ce3fAA==
 
 vue-eslint-parser@^5.0.0:
   version "5.0.0"

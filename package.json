@@ -1,7 +1,7 @@
 {
   "name": "simple-vmix-switcher-electron",
   "productName": "Simple vMix Switcher Electron",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "author": {
     "name": "Jens Grønhøj Stigaard",
@@ -19,7 +19,7 @@
   "main": "background.js",
   "dependencies": {
     "node-vmix": "^1.1.5",
-    "vmix-js-utils": "^3.3.0",
+    "vmix-js-utils": "^3.4.0",
     "vue": "^2.6.10",
     "vue-class-component": "^7.0.2",
     "vue-directive-long-press": "^1.1.0",

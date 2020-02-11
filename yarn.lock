@@ -9184,10 +9184,10 @@ vmix-js-utils@^3.2.0:
     xmldom "^0.2.1"
     xpath "^0.0.27"
 
-vmix-js-utils@^3.3.0:
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/vmix-js-utils/-/vmix-js-utils-3.3.0.tgz#b857750cff935a12f791aeb597145d5cdd60ce6d"
-  integrity sha512-ZcikSc1jsbdTrMROp8lVwwUt8hO0SDTlWTWh+YkrPOnGnSkJQ6owsDg/u3sGvzGB8uUJ+ncHCeXKta1mPx1vmA==
+vmix-js-utils@^3.4.0:
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/vmix-js-utils/-/vmix-js-utils-3.4.0.tgz#7dfb8cf602347254efff1fb910b16fdf090fb82b"
+  integrity sha512-AuWoo5x4elKv+wFMZqA+j7IRNaAZdPm4xyjG5lxRFoXVUbEwNnLYw3ro5Ag0Z9E0iWQnbNz591hX2rwo4IlEaQ==
   dependencies:
     axios "^0.19.2"
     lodash "^4.17.15"

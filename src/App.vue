@@ -6,41 +6,28 @@
       v-text-field(v-model="host" label="vMix host" @keyup.enter="updateHost" @blur="updateHost").mt-8
       v-icon#connection-status.ml-2.mt-2(
         small 
-        :class="connected?'green--text':'red--text'" 
+        :class="$vMixConnection.connected?'green--text':'red--text'" 
       ) fa-circle
 
     v-content
-      v-container(v-if="!connected") Not yet connected to vMix instance...
+      v-container(v-if="!$vMixConnection.connected")
+        div.text-center
+          v-icon(color="orange") fa-exclamation-circle
+          div: b Not yet connected to vMix instance...
+          div Please check whether the entered IP address ({{ $store.state.vMixConnection.host }}) is correct...
       v-container(fluid v-else)
-        div.text-center Program
-        v-row#program-row(no-gutters)
-          switcher-button(
-            v-for="(input, i) in switcherInputs" :key="`program-row-input-${i}`"
-
-            :number="i+1"
-            :input="input"
-            :on="input.program"
-            on-color="red lighten-1"
-            @click="program(i+1)"
-          )
-
-        hr.my-3
-
-        div.text-center Preview
-        v-row#preview-row(no-gutters)
-          switcher-button(
-            v-for="(input, i) in switcherInputs" :key="`preview-row-input-${i}`"
-
-            :number="i+1"
-            :input="input"
-            :on="input.preview"
-            on-color="green"
-            @click="preview(i+1)"
-          )
-        
-        hr.my-3
-        
-        action-buttons(@exec="execvMixCommand")
+        div(v-if="!switcherInputs.length") Ingen inputs fundet...
+        div(v-else)
+          // Preview and program rows
+          div.d-flex(:class="$store.state.previewProgramRows.swapped?'flex-column':'flex-column-reverse'")
+            program-row(:inputs="switcherInputs")
+            hr.my-3
+            preview-row(:inputs="switcherInputs")
+          
+          hr.my-3
+          
+          // Action buttons
+          action-buttons
 </template>
 
 <script lang="ts">
@@ -48,67 +35,75 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Watch } from 'vue-property-decorator'
 
-import { InputMapper, ApiDataParser } from 'vmix-js-utils'
+import { XmlInputMapper, XmlApiDataParser, XmlOverlayChannels } from 'vmix-js-utils'
 
-import vMix, { ConnectionTCP } from 'node-vmix'
-
+import PreviewRow from './PreviewRow.vue'
+import ProgramRow from './ProgramRow.vue'
 import ActionButtons from './ActionButtons.vue'
-import SwitcherButton from './components/SwitcherButton.vue'
 
 @Component({
   components: {
     ActionButtons,
-    SwitcherButton
+    PreviewRow,
+    ProgramRow
   }
 })
 export default class App extends Vue {
   host: string = ''
 
-  // vMix connection
-  vMixConn: ConnectionTCP | null = null
-
   inputs: any[] = []
   tallyInfo: any | null = null
+  overlayChannels: any | null = null
 
   xmlDataInterval: any | null = null
 
   created() {
     this.host = this.$store.state.vMixConnection.host
 
-    this.vMixConn = new vMix.ConnectionTCP(this.host)
+    // @ts-ignore
+    this.setVmixConnection(this.$store.state.vMixConnection.host, { debug: true })
   }
 
-  @Watch('connected')
+  @Watch('$vMixConnection.connected')
   onConnectedChanged(val: boolean, oldval: boolean) {
     const isConnected = val
 
-    console.log('Connected changed', isConnected)
+    // console.log('Connected changed', isConnected)
 
     if (isConnected) {
-      this.vMixConn!.send('SUBSCRIBE TALLY')
+      // @ts-ignore
+      this.$vMixConnection!.send('SUBSCRIBE TALLY')
 
-      this.vMixConn!.on('tally', (tallySummary: object) => {
+      // @ts-ignore
+      this.$vMixConnection!.on('tally', (tallySummary: object) => {
         // console.log('Tally summary:', tallySummary)
 
         this.tallyInfo = tallySummary
       })
 
       // Request XML data each 5th second to update input titles
-      this.vMixConn!.on('xmlData', (xmlRawData: string) => {
+      // @ts-ignore
+      this.$vMixConnection!.on('xmlData', (xmlRawData: string) => {
         // console.log('RAW', xmlRawData)
 
-        const xmlContent = ApiDataParser.parse(xmlRawData)
+        const xmlContent = XmlApiDataParser.parse(xmlRawData)
+
         const inputs = Object.values(
-          InputMapper.mapInputs(InputMapper.extractInputsFromXML(xmlContent), ['title'])
+          XmlInputMapper.mapInputs(XmlInputMapper.extractInputsFromXML(xmlContent), ['title'])
         )
 
+        const overlayChannels = XmlOverlayChannels.extract(xmlContent)
+
         this.inputs = inputs
+        this.overlayChannels = overlayChannels
       })
 
       this.xmlDataInterval = setInterval(() => {
-        this.vMixConn!.send('XML')
-      }, 5000)
-      this.vMixConn!.send('XML')
+        // @ts-ignore
+        this.$vMixConnection!.send('XML')
+      }, 2000)
+      // @ts-ignore
+      this.$vMixConnection!.send('XML')
     } else {
       clearInterval(this.xmlDataInterval)
       this.xmlDataInterval = null
@@ -117,15 +112,9 @@ export default class App extends Vue {
 
   @Watch('$store.state.vMixConnection.host')
   onHostChanged(val: string, oldval: string) {
-    this.vMixConn = new vMix.ConnectionTCP(val, { debug: true })
-  }
-
-  get connected() {
-    if (!this.vMixConn) {
-      return false
-    }
-
-    return this.vMixConn!.connected()
+    const newHost = val
+    // @ts-ignore
+    this.setVmixConnection(newHost, { debug: true })
   }
 
   get switcherInputs() {
@@ -135,6 +124,8 @@ export default class App extends Vue {
 
         input.preview = false
         input.program = false
+        input.inOverlayChannelsPreview = []
+        input.inOverlayChannelsProgram = []
 
         return input
       }
@@ -154,19 +145,26 @@ export default class App extends Vue {
       })
     }
 
+    // Parse overlay channels
+    if (this.overlayChannels) {
+      Object.entries(this.overlayChannels).forEach(([channelNumber, channel]) => {
+        // console.log('Channel', channelNumber, ':', channel)
+
+        // @ts-ignore
+        if (channel.inputNumber && inputs.length >= channel.inputNumber) {
+          // @ts-ignore
+          if (channel.inPreview) {
+            // @ts-ignore
+            inputs[channel.inputNumber - 1].inOverlayChannelsPreview.push(channelNumber)
+          } else {
+            // @ts-ignore
+            inputs[channel.inputNumber - 1].inOverlayChannelsProgram.push(channelNumber)
+          }
+        }
+      })
+    }
+
     return inputs
-  }
-
-  preview(inputNumber: number) {
-    this.execvMixCommand({ Function: 'PreviewInput', Input: inputNumber })
-  }
-
-  program(inputNumber: number) {
-    this.execvMixCommand({ Function: 'CutDirect', Input: inputNumber })
-  }
-
-  execvMixCommand(command: any) {
-    this.vMixConn!.send(command)
   }
 
   updateHost() {
@@ -187,4 +185,16 @@ hr
 
 #connection-status
   text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5)
+
+
+.rotated-header
+  /* Rotate from top left corner (not default) */
+  transform-origin: 0 0
+  transform: rotate(90deg)
+  letter-spacing: 2px
+  text-transform: uppercase
+  margin-left: 15px
+  width: 22px
+  padding: 0px
+  font-weight: bold
 </style>

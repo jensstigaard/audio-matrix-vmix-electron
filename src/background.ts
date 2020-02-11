@@ -1,10 +1,10 @@
 'use strict'
 
-import { app, protocol, BrowserWindow } from 'electron'
+import { app, protocol, BrowserWindow, Menu } from 'electron'
 import { createProtocol, installVueDevtools } from 'vue-cli-plugin-electron-builder/lib'
 
 // VueX store
-import './store'
+import store from './store'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -95,3 +95,51 @@ if (isDevelopment) {
 }
 
 // this.conn.on('disconnect', console.error)
+
+const isMac = process.platform === 'darwin'
+
+const template = [
+  // { role: 'appMenu' }
+  ...(isMac
+    ? [
+        {
+          label: app.name,
+          submenu: [
+            { role: 'about' },
+            { type: 'separator' },
+            { role: 'services' },
+            { type: 'separator' },
+            { role: 'hide' },
+            { role: 'hideothers' },
+            { role: 'unhide' },
+            { type: 'separator' },
+            { role: 'quit' }
+          ]
+        }
+      ]
+    : []),
+  {
+    label: 'View',
+    submenu: [
+      {
+        label: 'Swap Preview/Program rows',
+        accelerator: process.platform === 'darwin' ? 'Alt+Cmd+P' : 'Ctrl+Shift+P',
+        click: async () => {
+          store.dispatch('swapPreviewProgramRows')
+        }
+      },
+      { type: 'separator' },
+      { role: 'reload' },
+      { role: 'forcereload' },
+      { role: 'toggledevtools' },
+      { type: 'separator' },
+      { role: 'resetzoom' },
+      { role: 'zoomin' },
+      { role: 'zoomout' },
+      { type: 'separator' },
+      { role: 'togglefullscreen' }
+    ]
+  }
+]
+
+Menu.setApplicationMenu(Menu.buildFromTemplate(template))

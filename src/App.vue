@@ -20,14 +20,14 @@
         div(v-else)
           // Preview and program rows
           div.d-flex(:class="$store.state.previewProgramRows.swapped?'flex-column':'flex-column-reverse'")
-            program-row(:inputs="switcherInputs")
-            hr.my-3
-            preview-row(:inputs="switcherInputs")
+            program-row(:inputs="switcherInputs" :total-number-of-inputs="inputs.length")
+            v-progress-linear(:value="transitionProgress" height="3").my-3
+            preview-row(:inputs="switcherInputs" :total-number-of-inputs="inputs.length")
           
           hr.my-3
           
-          // Action buttons
-          action-buttons
+          // Transition buttons
+          transition-buttons(:transitions="transitions" @transition="transition")
 </template>
 
 <script lang="ts">
@@ -35,15 +35,19 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Watch } from 'vue-property-decorator'
 
-import { XmlInputMapper, XmlApiDataParser, XmlOverlayChannels } from 'vmix-js-utils'
+import { XmlInputMapper, XmlApiDataParser, XmlOverlayChannels, XmlTransitions } from 'vmix-js-utils'
 
 import PreviewRow from './PreviewRow.vue'
 import ProgramRow from './ProgramRow.vue'
-import ActionButtons from './ActionButtons.vue'
+import TransitionButtons from './TransitionButtons.vue'
+
+const TRANSITION_STEP: number = 100 // ms
+
+const sleep = (m: number) => new Promise(r => setTimeout(r, m))
 
 @Component({
   components: {
-    ActionButtons,
+    TransitionButtons,
     PreviewRow,
     ProgramRow
   }
@@ -53,9 +57,11 @@ export default class App extends Vue {
 
   inputs: any[] = []
   tallyInfo: any | null = null
-  overlayChannels: any | null = null
+  overlayChannels: { [key: number]: any } | null = null
+  transitions: { [key: number]: any } | null = null
 
   xmlDataInterval: any | null = null
+  transitionProgress: number = 0
 
   created() {
     this.host = this.$store.state.vMixConnection.host
@@ -93,9 +99,11 @@ export default class App extends Vue {
         )
 
         const overlayChannels = XmlOverlayChannels.extract(xmlContent)
+        const transitions = XmlTransitions.extract(xmlContent)
 
         this.inputs = inputs
         this.overlayChannels = overlayChannels
+        this.transitions = transitions
       })
 
       this.xmlDataInterval = setInterval(() => {
@@ -175,6 +183,36 @@ export default class App extends Vue {
     }
 
     this.$store.dispatch('setHost', newHost)
+  }
+
+  /**
+   * Fire a Transition and show progress
+   */
+  async transition(transition: { duration: number; effect: string; number: number }) {
+    // @ts-ignore
+    this.execVmixCommands({ Function: `Transition${transition.number}` })
+    this.transitionProgress = 0
+
+    const duration: number = transition.duration
+
+    const remainder: number = TRANSITION_STEP - (duration % TRANSITION_STEP)
+    const numberOfSteps: number = Math.ceil(duration / TRANSITION_STEP)
+
+    for (let i = 0; numberOfSteps > i; i++) {
+      const stepsize = i === numberOfSteps - 1 ? remainder : TRANSITION_STEP
+
+      await sleep(stepsize)
+      const percentage: number =
+        ((i === numberOfSteps - 1 ? i * TRANSITION_STEP + remainder : i * TRANSITION_STEP) /
+          duration) *
+        100
+      // console.log('Set transition progress', percentage)
+      this.transitionProgress = percentage
+    }
+
+    // Reset transition progress
+    await sleep(1000)
+    this.transitionProgress = 0
   }
 }
 </script>

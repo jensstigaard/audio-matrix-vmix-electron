@@ -11,18 +11,33 @@ export default new Vuex.Store({
     vMixConnection: {
       host: '127.0.0.1',
       debug: false
+    },
+
+    previewProgramRows: {
+      // Swapped
+      // false = Program on top
+      // true = Preview on top
+      swapped: false
     }
   },
 
   actions: {
     setHost({ commit }, newHost: string) {
       commit('setHost', newHost)
+    },
+
+    swapPreviewProgramRows({ commit }) {
+      commit('swapPreviewProgramRows')
     }
   },
 
   mutations: {
     setHost(state, newHost: string) {
       state.vMixConnection.host = newHost
+    },
+
+    swapPreviewProgramRows(state) {
+      state.previewProgramRows.swapped = !state.previewProgramRows.swapped
     }
   },
 

@@ -1,16 +1,18 @@
 <template lang="pug">
 div
-	v-row#preview-row(no-gutters)
-		div.rotated-header Preview
-		switcher-button(
-			v-for="(input, i) in inputs" 
-			:key="`preview-row-input-${i}`"
-			:number="i+1"
-			:input="input"
-			:background-color="backgroundColor(input)"
-			@click="preview(i+1)"
-			@long-click="toggleOverlayChannelsPreview(input)"
-		)
+  v-row#preview-row(no-gutters)
+    div.rotated-header Preview
+    switcher-button(
+      v-for="(input, i) in inputs" 
+      :key="`preview-row-input-${i}`"
+      :number="i+1"
+      :input="input"
+      :background-color="backgroundColor(input)"
+      @click="preview(i+1)"
+      @long-click="toggleOverlayChannelsPreview(input)"
+    )
+
+    div(v-if="totalNumberOfInputs > inputs.length").pt-8 + {{ (totalNumberOfInputs - inputs.length) }} input
 </template>
 
 <script lang="ts">
@@ -28,6 +30,7 @@ const IN_OVERLAY_PREVIEW_COLOR = 'orange lighten-3'
 })
 export default class PreviewRow extends Vue {
   @Prop() readonly inputs!: Object[]
+  @Prop() readonly totalNumberOfInputs!: number
 
   overlayChannelDialog: any = {
     input: null,

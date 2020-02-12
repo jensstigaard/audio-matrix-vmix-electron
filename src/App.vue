@@ -1,13 +1,6 @@
 <template lang="pug">
   v-app
-    v-app-bar(app color="primary" dark)
-      div: b Simple vMix switcher
-      v-spacer
-      v-text-field(v-model="host" label="vMix host" @keyup.enter="updateHost" @blur="updateHost").mt-8
-      v-icon#connection-status.ml-2.mt-2(
-        small 
-        :class="$vMixConnection.connected?'green--text':'red--text'" 
-      ) fa-circle
+    app-bar
 
     v-content
       v-container(v-if="!$vMixConnection.connected")
@@ -20,8 +13,11 @@
         div(v-else)
           // Preview and program rows
           div.d-flex(:class="$store.state.previewProgramRows.swapped?'flex-column':'flex-column-reverse'")
+            // Program row
             program-row(:inputs="switcherInputs" :total-number-of-inputs="inputs.length")
-            v-progress-linear(:value="transitionProgress" height="3").my-3
+            // Transition progress line
+            v-progress-linear(:value="transitionProgress" height="3").mt-5.mb-3
+            // Preview row
             preview-row(:inputs="switcherInputs" :total-number-of-inputs="inputs.length")
           
           hr.my-3
@@ -37,6 +33,7 @@ import { Watch } from 'vue-property-decorator'
 
 import { XmlInputMapper, XmlApiDataParser, XmlOverlayChannels, XmlTransitions } from 'vmix-js-utils'
 
+import AppBar from './AppBar.vue'
 import PreviewRow from './PreviewRow.vue'
 import ProgramRow from './ProgramRow.vue'
 import TransitionButtons from './TransitionButtons.vue'
@@ -47,14 +44,13 @@ const sleep = (m: number) => new Promise(r => setTimeout(r, m))
 
 @Component({
   components: {
+    AppBar,
     TransitionButtons,
     PreviewRow,
     ProgramRow
   }
 })
 export default class App extends Vue {
-  host: string = ''
-
   inputs: any[] = []
   tallyInfo: any | null = null
   overlayChannels: { [key: number]: any } | null = null
@@ -64,8 +60,6 @@ export default class App extends Vue {
   transitionProgress: number = 0
 
   created() {
-    this.host = this.$store.state.vMixConnection.host
-
     // @ts-ignore
     this.setVmixConnection(this.$store.state.vMixConnection.host, { debug: true })
   }
@@ -76,46 +70,52 @@ export default class App extends Vue {
 
     // console.log('Connected changed', isConnected)
 
-    if (isConnected) {
-      // @ts-ignore
-      this.$vMixConnection!.send('SUBSCRIBE TALLY')
-
-      // @ts-ignore
-      this.$vMixConnection!.on('tally', (tallySummary: object) => {
-        // console.log('Tally summary:', tallySummary)
-
-        this.tallyInfo = tallySummary
-      })
-
-      // Request XML data each 5th second to update input titles
-      // @ts-ignore
-      this.$vMixConnection!.on('xmlData', (xmlRawData: string) => {
-        // console.log('RAW', xmlRawData)
-
-        const xmlContent = XmlApiDataParser.parse(xmlRawData)
-
-        const inputs = Object.values(
-          XmlInputMapper.mapInputs(XmlInputMapper.extractInputsFromXML(xmlContent), ['title'])
-        )
-
-        const overlayChannels = XmlOverlayChannels.extract(xmlContent)
-        const transitions = XmlTransitions.extract(xmlContent)
-
-        this.inputs = inputs
-        this.overlayChannels = overlayChannels
-        this.transitions = transitions
-      })
-
-      this.xmlDataInterval = setInterval(() => {
-        // @ts-ignore
-        this.$vMixConnection!.send('XML')
-      }, 2000)
-      // @ts-ignore
-      this.$vMixConnection!.send('XML')
-    } else {
+    // If not connected anymore - do not attempt to send requests for XML data
+    if (!isConnected) {
       clearInterval(this.xmlDataInterval)
       this.xmlDataInterval = null
+      return
     }
+
+    // Connected
+    // Add address to previous known addresses
+    this.$store.dispatch('addHostToPreviousConnectedVmixHosts')
+
+    // @ts-ignore
+    this.$vMixConnection!.send('SUBSCRIBE TALLY')
+
+    // @ts-ignore
+    this.$vMixConnection!.on('tally', (tallySummary: object) => {
+      // console.log('Tally summary:', tallySummary)
+
+      this.tallyInfo = tallySummary
+    })
+
+    // Request XML data each 5th second to update input titles
+    // @ts-ignore
+    this.$vMixConnection!.on('xml', (xmlRawData: string) => {
+      // console.log('RAW', xmlRawData)
+
+      const xmlContent = XmlApiDataParser.parse(xmlRawData)
+
+      const inputs = Object.values(
+        XmlInputMapper.mapInputs(XmlInputMapper.extractInputsFromXML(xmlContent), ['title'])
+      )
+
+      const overlayChannels = XmlOverlayChannels.extract(xmlContent)
+      const transitions = XmlTransitions.extract(xmlContent)
+
+      this.inputs = inputs
+      this.overlayChannels = overlayChannels
+      this.transitions = transitions
+    })
+
+    this.xmlDataInterval = setInterval(() => {
+      // @ts-ignore
+      this.$vMixConnection!.send('XML')
+    }, 2000)
+    // @ts-ignore
+    this.$vMixConnection!.send('XML')
   }
 
   @Watch('$store.state.vMixConnection.host')
@@ -175,16 +175,6 @@ export default class App extends Vue {
     return inputs
   }
 
-  updateHost() {
-    const newHost = this.host
-
-    if (newHost === this.$store.state.vMixConnection.host) {
-      return
-    }
-
-    this.$store.dispatch('setHost', newHost)
-  }
-
   /**
    * Fire a Transition and show progress
    */
@@ -229,10 +219,11 @@ hr
   /* Rotate from top left corner (not default) */
   transform-origin: 0 0
   transform: rotate(90deg)
-  letter-spacing: 2px
+  // letter-spacing: 2px
   text-transform: uppercase
-  margin-left: 15px
-  width: 22px
+  margin-top: 3px
+  margin-left: 20px
+  width: 10px
   padding: 0px
   font-weight: bold
 </style>

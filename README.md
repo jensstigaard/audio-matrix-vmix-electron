@@ -14,7 +14,8 @@ You are free to clone the repository to develop your own app based in this code.
  - Long touch on input in program row enables input to be put into an overlay channel
  - Shortcut: `Ctrl+Shift+P` (Win+Linux) / `Cmd+Alt+P` (Mac) to swap Preview and Program row order
  - Transitions row: Cut and Quick Play + 4 defined transitions in vMix
- - Transition progress between Program and Preview row
+ - Transition progress (seen between Program and Preview row)
+ - vMix host entering - Saves previous connected hosts
 
 ## Project setup
 ### Install dependencies

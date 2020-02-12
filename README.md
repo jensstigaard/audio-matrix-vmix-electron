@@ -2,7 +2,7 @@
 
 Built with Electron. Can be built to Windows, Mac or Linux.
 
-![Simple vMix Switcher Electron](./readme_assets/overview.png "Application overview")
+![Simple vMix Switcher Electron](./readme_assets/overview_030.png "Application overview")
 
 
 ## Project setup

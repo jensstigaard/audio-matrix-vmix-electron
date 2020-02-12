@@ -6,40 +6,16 @@ import { createPersistedState, createSharedMutations } from 'vuex-electron'
 
 Vue.use(Vuex)
 
+import state from './state'
+import actions from './actions'
+import mutations from './mutations'
+
 export default new Vuex.Store({
-  state: {
-    vMixConnection: {
-      host: '127.0.0.1',
-      debug: false
-    },
+  state,
 
-    previewProgramRows: {
-      // Swapped
-      // false = Program on top
-      // true = Preview on top
-      swapped: false
-    }
-  },
+  actions,
 
-  actions: {
-    setHost({ commit }, newHost: string) {
-      commit('setHost', newHost)
-    },
-
-    swapPreviewProgramRows({ commit }) {
-      commit('swapPreviewProgramRows')
-    }
-  },
-
-  mutations: {
-    setHost(state, newHost: string) {
-      state.vMixConnection.host = newHost
-    },
-
-    swapPreviewProgramRows(state) {
-      state.previewProgramRows.swapped = !state.previewProgramRows.swapped
-    }
-  },
+  mutations,
 
   modules: {},
 

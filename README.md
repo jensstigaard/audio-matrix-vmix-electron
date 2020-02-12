@@ -1,9 +1,18 @@
 # simple-vmix-switcher-electron
 
-Built with Electron. Can be built to Windows, Mac or Linux.
+Simple vMix switcher app built with Electron. Can be compiled as app to Windows, Mac or Linux.
+
+Oriented for touch use.
 
 ![Simple vMix Switcher Electron](./readme_assets/overview_030.png "Application overview")
 
+# Feature summary
+ - Traditional preview and program row including 'tally' - 8 inputs
+ - Shows badges (tally) on input in overlay channel preview/program
+ - Long touch on input in program row enables input to be put into an overlay channel
+ - Shortcut: `Ctrl+Shift+P` (Win+Linux) / `Cmd+Alt+P` (Mac) to swap Preview and Program row order
+ - Transitions row: Cut and Quick Play + 4 defined transitions in vMix
+ - Transition progress between Program and Preview row
 
 ## Project setup
 ```

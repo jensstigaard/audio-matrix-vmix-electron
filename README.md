@@ -6,8 +6,8 @@ Oriented for touch use.
 
 
 **Feature summary:**
- - Traditional preview and program row - 8 inputs
- - Shows badges on input in overlay channel preview/program
+ - Traditional preview and program row including 'tally' - 8 inputs
+ - Shows badges (tally) on input in overlay channel preview/program
  - Long touch on input in program row enables input to be put into an overlay channel
  - Ctrl+Shift+P / Cmd+Shift+P to swap Preview and Program row order
  - Transitions row: Cut and Quick Play + 4 defined transitions in vMix

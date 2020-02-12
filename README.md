@@ -16,9 +16,9 @@ You are free to clone the repository to develop your own app based in this code.
  - Transitions row: Cut and Quick Play + 4 defined transitions in vMix
  - Transition progress (seen between Program and Preview row)
  - vMix host connection
-  - Status dot
-  - Easy change of host
-  - Auto-complete (Saves list of previous connected hosts)
+   * Status dot
+   * Easy change of host
+   * Auto-complete (Saves list of previous connected hosts)
 
 ## Project setup
 ### Install dependencies

@@ -15,7 +15,10 @@ You are free to clone the repository to develop your own app based in this code.
  - Shortcut: `Ctrl+Shift+P` (Win+Linux) / `Cmd+Alt+P` (Mac) to swap Preview and Program row order
  - Transitions row: Cut and Quick Play + 4 defined transitions in vMix
  - Transition progress (seen between Program and Preview row)
- - vMix host entering - Saves previous connected hosts
+ - vMix host connection
+  - Status dot
+  - Easy change of host
+  - Auto-complete (Saves list of previous connected hosts)
 
 ## Project setup
 ### Install dependencies

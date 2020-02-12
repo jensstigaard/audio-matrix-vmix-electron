@@ -11,8 +11,8 @@ v-col.ma-1
   ).px-0
     v-col
       v-badge(
-        v-if="input && input.inOverlayChannelsPreview.length"
-        :content="input.inOverlayChannelsPreview.join(',')"
+        v-if="badgeLeft"
+        :content="badgeLeft"
         color="orange darken-2"
         left
         offset-x="-20"
@@ -20,9 +20,9 @@ v-col.ma-1
       )
         big {{ number }}
       v-badge(
-        v-else-if="input && input.inOverlayChannelsProgram.length"
-        :content="input.inOverlayChannelsProgram.join(',')"
-        color="blue lighten-1"
+        v-else-if="badgeRight"
+        :content="badgeRight"
+        color="blue"
         offset-x="-20"
         offset-y="-8"
       )
@@ -46,6 +46,8 @@ export default class SwitcherButton extends Vue {
   @Prop(Object) readonly input!: Object
   @Prop(Number) readonly number!: Number
   @Prop(String) readonly backgroundColor!: String
+  @Prop(String) readonly badgeLeft!: String
+  @Prop(String) readonly badgeRight!: String
 
   // For registering long presses
   currentPress: { [key: string]: any } = {
@@ -54,7 +56,7 @@ export default class SwitcherButton extends Vue {
 
   get style() {
     const styles: { [key: string]: string } = {
-      height: '80px'
+      height: '66px'
     }
 
     // @ts-ignore

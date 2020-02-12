@@ -3,16 +3,18 @@ div
   v-row#program-row(no-gutters)
     div.rotated-header Program
     switcher-button(
-      v-for="(input, i) in inputs" :key="`program-row-input-${i}`"
-
+      v-for="(input, i) in inputs"
+      :key="`program-row-input-${i}`"
       :number="i+1"
       :input="input"
       :background-color="backgroundColor(input)"
+      :badge-right="badge(input)"
       @click="program(i+1)"
       @long-click="toggleOverlayChannelsProgram(input, i+1)"
     )
 
     div(v-if="totalNumberOfInputs > inputs.length").pt-8 + {{ (totalNumberOfInputs - inputs.length) }} input
+
   // Menu for overlay channel control
   v-menu(v-model="overlayChannelDialog.show")
     v-card: v-card-text
@@ -25,7 +27,6 @@ div
         
         v-btn(icon @click="overlayChannelDialog.show=false").ml-5.mr-3
           v-icon() fa-times
-
 </template>
 
 <script lang="ts">
@@ -34,7 +35,7 @@ import { Vue, Component, Prop } from 'vue-property-decorator'
 import SwitcherButton from './components/SwitcherButton.vue'
 
 const IN_PROGRAM_COLOR = 'red lighten-1'
-const IN_OVERLAY_COLOR = 'blue lighten-1'
+const IN_OVERLAY_COLOR = 'blue lighten-2'
 
 @Component({
   components: {
@@ -45,7 +46,7 @@ export default class ProgramRow extends Vue {
   @Prop() readonly inputs!: Object[]
   @Prop() readonly totalNumberOfInputs!: number
 
-  overlayChannelDialog: any = {
+  overlayChannelDialog: { input: number | null; show: boolean } = {
     input: null,
     // x: 0,
     // y: 0,
@@ -66,6 +67,16 @@ export default class ProgramRow extends Vue {
 
     // Default to 'default color'
     return ''
+  }
+
+  badge(input: object) {
+    // @ts-ignore
+    if (!input.inOverlayChannelsProgram.length) {
+      return null
+    }
+
+    // @ts-ignore
+    return input.inOverlayChannelsProgram[0]
   }
 
   toggleOverlayChannelsProgram(input: any, inputNumber: number) {

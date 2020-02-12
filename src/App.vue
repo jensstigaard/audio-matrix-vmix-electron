@@ -38,7 +38,10 @@ import PreviewRow from './PreviewRow.vue'
 import ProgramRow from './ProgramRow.vue'
 import TransitionButtons from './TransitionButtons.vue'
 
+const FETCH_XML_DATA_INTERVAL: number = 2000 // ms
 const TRANSITION_STEP: number = 100 // ms
+
+const LIMIT_NUMBER_OF_INPUTS: number = 8
 
 const sleep = (m: number) => new Promise(r => setTimeout(r, m))
 
@@ -113,7 +116,7 @@ export default class App extends Vue {
     this.xmlDataInterval = setInterval(() => {
       // @ts-ignore
       this.$vMixConnection!.send('XML')
-    }, 2000)
+    }, FETCH_XML_DATA_INTERVAL)
     // @ts-ignore
     this.$vMixConnection!.send('XML')
   }
@@ -126,7 +129,7 @@ export default class App extends Vue {
   }
 
   get switcherInputs() {
-    const inputs = JSON.parse(JSON.stringify(this.inputs.slice(0, 8))).map(
+    const inputs = JSON.parse(JSON.stringify(this.inputs.slice(0, LIMIT_NUMBER_OF_INPUTS))).map(
       (input: any, index: number) => {
         const number = index + 1
 

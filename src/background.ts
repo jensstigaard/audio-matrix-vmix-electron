@@ -20,8 +20,8 @@ protocol.registerSchemesAsPrivileged([
 function createWindow() {
   // Create the browser window.
   win = new BrowserWindow({
-    width: 800,
-    height: 450,
+    width: 860,
+    height: 380,
     webPreferences: {
       nodeIntegration: true
     }
@@ -142,4 +142,5 @@ const template = [
   }
 ]
 
+// @ts-ignore
 Menu.setApplicationMenu(Menu.buildFromTemplate(template))

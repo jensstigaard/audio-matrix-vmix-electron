@@ -1,8 +1,10 @@
 # simple-vmix-switcher-electron
 
-Simple vMix switcher app built with Electron. Can be compiled as app to Windows, Mac or Linux.
+Simple vMix switcher app built with [ElectronJS](https://electronjs.org). ElectronJS apps be built for Windows, Mac or Linux.
 
-Oriented for touch use.
+The app is oriented for touch use.
+
+You are free to clone the repository to develop your own app based in this code.
 
 ![Simple vMix Switcher Electron](./readme_assets/overview_030.png "Application overview")
 
@@ -15,6 +17,7 @@ Oriented for touch use.
  - Transition progress between Program and Preview row
 
 ## Project setup
+### Install dependencies
 ```
 yarn install
 ```

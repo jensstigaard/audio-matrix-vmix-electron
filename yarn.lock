@@ -5899,10 +5899,10 @@ node-releases@^1.1.47:
   dependencies:
     semver "^6.3.0"
 
-node-vmix@^1.1.5:
-  version "1.1.5"
-  resolved "https://registry.yarnpkg.com/node-vmix/-/node-vmix-1.1.5.tgz#0afe7d2668e06d1fb2a88effc2c476ae81a00bc1"
-  integrity sha512-G8tQD9hqe87kT2jUPhqyB8dU3US1rVzU8RnTydsdd8jCvl4PMmJS7NjKusYARBFY5iBx590f/9a7N5yk+LRp1A==
+node-vmix@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/node-vmix/-/node-vmix-1.2.0.tgz#4b767d598c905074d89855edcb9ef97a7fccad88"
+  integrity sha512-MOKsHvN4eXg1xYli6wLCcX0n2XBGa6CFegccTCu2DbsvmmJzaE5oDNLUlrD+vUdJUeBBiZl+m37rzc6xNMxh6w==
   dependencies:
     axios "^0.19.2"
     querystring "^0.2.0"

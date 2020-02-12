@@ -18,7 +18,7 @@
   },
   "main": "background.js",
   "dependencies": {
-    "node-vmix": "^1.1.5",
+    "node-vmix": "^1.2.0",
     "vmix-js-utils": "^3.4.0",
     "vue": "^2.6.10",
     "vue-class-component": "^7.0.2",

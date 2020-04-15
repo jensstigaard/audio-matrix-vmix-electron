@@ -1,6 +1,6 @@
 # simple-vmix-switcher-electron
 
-Simple vMix switcher app built with [ElectronJS](https://electronjs.org). ElectronJS apps be built for Windows, Mac or Linux.
+Simple vMix switcher app built with [ElectronJS](https://electronjs.org). ElectronJS is a cross-platform framework allowing the app to be built for each Windows, Mac or Linux. See the Releases tab for a direct download of the app.
 
 The app is oriented for touch use.
 

@@ -11,19 +11,30 @@
       v-container(fluid v-else)
         div(v-if="!switcherInputs.length") No inputs found...
         div(v-else)
-          // Preview and program rows
-          div.d-flex(:class="$store.state.previewProgramRows.swapped?'flex-column':'flex-column-reverse'")
-            // Program row
-            program-row(:inputs="switcherInputs" :total-number-of-inputs="inputs.length")
-            // Transition progress line
-            v-progress-linear(:value="transitionProgress" height="3").mt-5.mb-3
-            // Preview row
-            preview-row(:inputs="switcherInputs" :total-number-of-inputs="inputs.length")
-          
-          hr.my-3
-          
-          // Transition buttons
-          transition-buttons(:transitions="transitions" @transition="transition")
+          table#audio-matrix
+            thead
+              tr
+                th
+                th(v-for="bus in audioBusses")
+                  div {{ bus.name }}
+                  small(v-show="bus.muted") MUTED
+                  small(v-show="!bus.muted && bus.volume") {{ Math.round(bus.volume) }} %
+            tbody
+              tr(v-for="input in inputs")
+                td 
+                  span(:class="!input.audiobusses.length||input.muted==='True'?'grey--text':''") {{ input.title }}
+                td(
+                  v-for="bus in audioBusses"
+                ) 
+                  v-btn(
+                    @click="toggleAudioBus(bus, input)"
+                    :color="input.audiobusses && input.audiobusses.includes(bus.abbr) ? 'green lighten-1' : 'grey lighten-2'"
+                  ).elevation-0
+                    //- span {{ input.audiobusses && input.audiobusses.includes(bus.abbr) ? 'ON' : '' }}
+          hr.my-8
+          div.grey--text(style="text-align:center"): small Inspiration from: thsorensen1 &amp; Håvard Njåstad  
+          //- pre {{ inputs }}
+
 </template>
 
 <script lang="ts">
@@ -33,10 +44,10 @@ import { Watch } from 'vue-property-decorator'
 
 import { XmlInputMapper, XmlApiDataParser, XmlOverlayChannels, XmlTransitions } from 'vmix-js-utils'
 
+import xpath, { SelectedValue } from 'xpath'
+import _ from 'lodash'
+
 import AppBar from './AppBar.vue'
-import PreviewRow from './PreviewRow.vue'
-import ProgramRow from './ProgramRow.vue'
-import TransitionButtons from './TransitionButtons.vue'
 
 const FETCH_XML_DATA_INTERVAL: number = 2000 // ms
 const TRANSITION_STEP: number = 100 // ms
@@ -45,19 +56,56 @@ const LIMIT_NUMBER_OF_INPUTS: number = 8
 
 const sleep = (m: number) => new Promise(r => setTimeout(r, m))
 
+function extractAudioBusses(xmlContent: Node): { [key: string]: any } {
+  const audioBussesXml: Element[] = xpath.select('//vmix/audio/*', xmlContent) as Element[]
+
+  // console.log(audioBussesXml)
+  // return
+
+  const audioBusses = audioBussesXml
+    .map((entry: Element) => {
+      if (!entry) {
+        return
+      }
+
+      // Map all base attributes of input
+      const name: string = entry.nodeName
+
+      if (name !== 'master' && !name.startsWith('bus')) {
+        return
+      }
+
+      const abbr = name === 'master' ? 'M' : name.replace('bus', '')
+
+      const attributesList = Object.values(entry.attributes)
+
+      const volumeAttr = attributesList.find((attr: Attr) => attr.name === 'volume')
+      const mutedAttr = attributesList.find((attr: Attr) => attr.name === 'muted')
+
+      // No attribute found
+      if (!volumeAttr || !mutedAttr) {
+        return
+      }
+
+      const volume: number = Number(volumeAttr.nodeValue)
+
+      const muted: boolean = String(mutedAttr.nodeValue) === 'True'
+
+      return { name, abbr, muted, volume }
+    })
+    .filter(x => x)
+
+  return _.keyBy(audioBusses, (bus: { [key: string]: any }) => bus.name)
+}
+
 @Component({
   components: {
-    AppBar,
-    TransitionButtons,
-    PreviewRow,
-    ProgramRow
+    AppBar
   }
 })
 export default class App extends Vue {
   inputs: any[] = []
-  tallyInfo: any | null = null
-  overlayChannels: { [key: number]: any } | null = null
-  transitions: { [key: number]: any } | null = null
+  audioBusses: { [key: string]: any } = {}
 
   xmlDataInterval: any | null = null
   transitionProgress: number = 0
@@ -84,39 +132,33 @@ export default class App extends Vue {
     // Add address to previous known addresses
     this.$store.dispatch('addHostToPreviousConnectedVmixHosts')
 
-    // @ts-ignore
-    this.$vMixConnection!.send('SUBSCRIBE TALLY')
-
-    // @ts-ignore
-    this.$vMixConnection!.on('tally', (tallySummary: object) => {
-      // console.log('Tally summary:', tallySummary)
-
-      this.tallyInfo = tallySummary
-    })
-
     // Request XML data each 5th second to update input titles
     // @ts-ignore
     this.$vMixConnection!.on('xml', (xmlRawData: string) => {
-      // console.log('RAW', xmlRawData)
+      // console.log('XML RECEIVED', xmlRawData)
 
       const xmlContent = XmlApiDataParser.parse(xmlRawData)
 
       const inputs = Object.values(
-        XmlInputMapper.mapInputs(XmlInputMapper.extractInputsFromXML(xmlContent), ['title'])
+        XmlInputMapper.mapInputs(XmlInputMapper.extractInputsFromXML(xmlContent), [
+          'title',
+          'muted',
+          'audiobusses'
+        ])
       )
 
-      const overlayChannels = XmlOverlayChannels.extract(xmlContent)
-      const transitions = XmlTransitions.extract(xmlContent)
+      // console.log(inputs)
+      const audioBusses = extractAudioBusses(xmlContent)
 
       this.inputs = inputs
-      this.overlayChannels = overlayChannels
-      this.transitions = transitions
+      this.audioBusses = audioBusses
     })
 
     this.xmlDataInterval = setInterval(() => {
       // @ts-ignore
       this.$vMixConnection!.send('XML')
     }, FETCH_XML_DATA_INTERVAL)
+
     // @ts-ignore
     this.$vMixConnection!.send('XML')
   }
@@ -142,70 +184,15 @@ export default class App extends Vue {
       }
     )
 
-    if (this.tallyInfo) {
-      this.tallyInfo.program.forEach((inputInProgram: number) => {
-        if (inputs.length >= inputInProgram) {
-          inputs[inputInProgram - 1].program = true
-        }
-      })
-
-      this.tallyInfo.preview.forEach((inputInPreview: number) => {
-        if (inputs.length >= inputInPreview) {
-          inputs[inputInPreview - 1].preview = true
-        }
-      })
-    }
-
-    // Parse overlay channels
-    if (this.overlayChannels) {
-      Object.entries(this.overlayChannels).forEach(([channelNumber, channel]) => {
-        // console.log('Channel', channelNumber, ':', channel)
-
-        // @ts-ignore
-        if (channel.inputNumber && inputs.length >= channel.inputNumber) {
-          // @ts-ignore
-          if (channel.inPreview) {
-            // @ts-ignore
-            inputs[channel.inputNumber - 1].inOverlayChannelsPreview.push(channelNumber)
-          } else {
-            // @ts-ignore
-            inputs[channel.inputNumber - 1].inOverlayChannelsProgram.push(channelNumber)
-          }
-        }
-      })
-    }
-
     return inputs
   }
 
   /**
-   * Fire a Transition and show progress
+   * Fire a toggle of audio bus
    */
-  async transition(transition: { duration: number; effect: string; number: number }) {
+  async toggleAudioBus(bus: { bus: string; abbr: string }, input: { key: string; title: string }) {
     // @ts-ignore
-    this.execVmixCommands({ Function: `Transition${transition.number}` })
-    this.transitionProgress = 0
-
-    const duration: number = transition.duration
-
-    const remainder: number = TRANSITION_STEP - (duration % TRANSITION_STEP)
-    const numberOfSteps: number = Math.ceil(duration / TRANSITION_STEP)
-
-    for (let i = 0; numberOfSteps > i; i++) {
-      const stepsize = i === numberOfSteps - 1 ? remainder : TRANSITION_STEP
-
-      await sleep(stepsize)
-      const percentage: number =
-        ((i === numberOfSteps - 1 ? i * TRANSITION_STEP + remainder : i * TRANSITION_STEP) /
-          duration) *
-        100
-      // console.log('Set transition progress', percentage)
-      this.transitionProgress = percentage
-    }
-
-    // Reset transition progress
-    await sleep(1000)
-    this.transitionProgress = 0
+    this.execVmixCommands({ Function: 'AudioBus', Input: input.key, Value: bus.abbr })
   }
 }
 </script>
@@ -214,12 +201,29 @@ export default class App extends Vue {
 hr
   border-top: 1px solid #E9E9E9
 
+table#audio-matrix
+  width: 100%
+
+  thead tr th, tbody tr td
+    border-bottom: 1px solid #DDD
+
+    &:first-child
+      text-align: right
+      padding-right: 5px
+
+    &:not(:first-child)
+      text-align: center
+
+    &:not(:last-child)
+      border-right: 1px solid #DDD
+
+  tbody
+
 #connection-status
   text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5)
 
-
 .rotated-header
-  /* Rotate from top left corner (not default) */
+  // Rotate from top left corner (not default)
   transform-origin: 0 0
   transform: rotate(90deg)
   // letter-spacing: 2px

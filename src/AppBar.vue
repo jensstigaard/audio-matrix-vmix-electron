@@ -1,6 +1,6 @@
 <template lang="pug">
 v-app-bar(app color="primary" dark)
-	div: b Simple vMix switcher
+	div: b Audio Matrix for vMix
 	v-spacer
 	v-combobox(
 		v-model="host"

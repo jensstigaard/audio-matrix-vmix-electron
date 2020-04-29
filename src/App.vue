@@ -9,7 +9,7 @@
           div: b Not yet connected to vMix instance...
           div Please check whether the entered IP address ({{ $store.state.vMixConnection.host }}) is correct...
       v-container(fluid v-else)
-        div(v-if="!switcherInputs.length") No inputs found...
+        div(v-if="!inputs.length") No inputs found...
         div(v-else)
           table#audio-matrix
             thead
@@ -170,23 +170,6 @@ export default class App extends Vue {
     const newHost = val
     // @ts-ignore
     this.setVmixConnection(newHost, { debug: true })
-  }
-
-  get switcherInputs() {
-    const inputs = JSON.parse(JSON.stringify(this.inputs.slice(0, LIMIT_NUMBER_OF_INPUTS))).map(
-      (input: any, index: number) => {
-        const number = index + 1
-
-        input.preview = false
-        input.program = false
-        input.inOverlayChannelsPreview = []
-        input.inOverlayChannelsProgram = []
-
-        return input
-      }
-    )
-
-    return inputs
   }
 
   /**

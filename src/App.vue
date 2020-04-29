@@ -32,7 +32,9 @@
                   ).elevation-0
                     //- span {{ input.audiobusses && input.audiobusses.includes(bus.abbr) ? 'ON' : '' }}
           hr.my-8
-          div.grey--text(style="text-align:center"): small Inspiration from: thsorensen1 &amp; Håvard Njåstad  
+          div.grey--text(style="text-align:center")
+            div: small Inspiration from:
+            div: small <a target="_blank" href="https://forums.vmix.com/posts/t21233-vMatrix-audio-routing">thsorensen1</a> &amp; <a href="https://github.com/Haavard15/vMixAudioMatrix" target="_blank">Håvard Njåstad</a>
           //- pre {{ inputs }}
 
 </template>

@@ -10,7 +10,7 @@ You are free to clone the repository to develop your own app based in this code.
 
 ## Downloads
 
-See the [**Releases**](./releases) tab for a direct download of the app.
+See the [**Releases**](../../releases) tab for a direct download of the app.
 
 
 ## Project setup

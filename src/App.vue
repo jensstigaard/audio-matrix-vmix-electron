@@ -17,16 +17,19 @@
                 th
                 th(v-for="bus in audioBusses")
                   div {{ bus.name }}
-                  small(v-show="bus.muted") MUTED
+                  div(v-show="bus.muted"): v-icon(small).red--text fa-volume-mute
                   small(v-show="!bus.muted && bus.volume") {{ Math.round(bus.volume) }} %
             tbody
               tr(v-for="input in inputs")
                 td 
-                  span(:class="!input.audiobusses.length||input.muted==='True'?'grey--text':''") {{ input.title }}
+                  div(:class="!input.audiobusses.length||input.muted==='True'?'grey--text':''") 
+                    span.mx-2(v-show="input.muted==='True'"): v-icon(small).red--text fa-volume-mute
+                    span {{ input.title }}
                 td(
                   v-for="bus in audioBusses"
                 ) 
                   v-btn(
+                    block
                     @click="toggleAudioBus(bus, input)"
                     :color="input.audiobusses && input.audiobusses.includes(bus.abbr) ? 'green lighten-1' : 'grey lighten-2'"
                   ).elevation-0
@@ -125,8 +128,10 @@ export default class App extends Vue {
 
     // If not connected anymore - do not attempt to send requests for XML data
     if (!isConnected) {
-      clearInterval(this.xmlDataInterval)
-      this.xmlDataInterval = null
+      if (this.xmlDataInterval) {
+        clearInterval(this.xmlDataInterval)
+        this.xmlDataInterval = null
+      }
       return
     }
 

@@ -1,6 +1,6 @@
 # audio-matrix-vmix-electron
 
-Simple Audio Matrix vMix app built with [ElectronJS](https://electronjs.org). ElectronJS is a cross-platform framework allowing the app to be built for each Windows, Mac or Linux. See the Releases tab for a direct download of the app.
+Simple Audio Matrix vMix app built with [ElectronJS](https://electronjs.org). ElectronJS is a cross-platform framework allowing the app to be built for each Windows, Mac or Linux. See the **Releases** tab for a direct download of the app.
 
 The app is oriented for touch use.
 

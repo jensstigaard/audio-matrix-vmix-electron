@@ -4,7 +4,7 @@ import { app, protocol, BrowserWindow, Menu } from 'electron'
 import { createProtocol, installVueDevtools } from 'vue-cli-plugin-electron-builder/lib'
 
 // VueX store
-import store from './store'
+import './store'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 

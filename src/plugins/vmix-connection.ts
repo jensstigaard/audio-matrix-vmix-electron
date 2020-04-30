@@ -28,6 +28,11 @@ export class vMixConnectionPluginStore {
   }
 
   setConnection(host: string) {
+    // Shutdown/Destroy old connection?
+    if (this.storeVM!.$data.internal.connection) {
+      console.log('Shutdown old connection!', this.storeVM!.$data.internal.connection)
+      this.storeVM!.$data.internal.connection.shutdown()
+    }
     // @ts-ignore
     this.storeVM!.$data.internal.connection = new ConnectionTCP(host)
   }
@@ -67,39 +72,5 @@ const vMixConnectionPlugin = {
     }
   }
 }
-
-//   // Global property - is connected?
-//   Vue.prototype.connected = false
-//   // Vue.prototype.connected = function () {
-//   //   console.log('Is connected?')
-//   //   if (!this.$vMixConnection) {
-//   //     return false
-//   //   }
-
-//   //   return this.$vMixConnection!.connected()
-//   // }
-
-//   // Global method - set vMix connection
-//   Vue.prototype.setVmixConnection = function (
-//     host: string,
-//     options: object = {},
-//     keepListeners: boolean = false
-//   ) {
-//     if (keepListeners) {
-//       console.log('Take care of listeners...')
-//     }
-
-//     this.$vMixConnection = new ConnectionTCP(host, options)
-//     this.$vMixConnection.on('connect', () => {
-//       console.log('Connected')
-//       this.connected = true
-//     })
-//     this.$vMixConnection.on('error', () => {
-//       console.log('Error')
-//       this.connected = false
-//     })
-//   }
-
-// }
 
 export default vMixConnectionPlugin

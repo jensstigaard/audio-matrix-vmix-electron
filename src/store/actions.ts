@@ -3,10 +3,6 @@ export default {
     commit('setHost', newHost)
   },
 
-  swapPreviewProgramRows({ commit }: { commit: Function }) {
-    commit('swapPreviewProgramRows')
-  },
-
   addHostToPreviousConnectedVmixHosts({ state, commit }: { commit: Function; state: any }) {
     const host: string = state.vMixConnection.host
 

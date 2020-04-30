@@ -4,12 +4,5 @@ export default {
     debug: false
   },
 
-  previousVmixConnectionHosts: [],
-
-  previewProgramRows: {
-    // Swapped
-    // false = Program on top
-    // true = Preview on top
-    swapped: false
-  }
+  previousVmixConnectionHosts: []
 }

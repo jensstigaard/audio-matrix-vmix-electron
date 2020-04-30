@@ -22,13 +22,14 @@
             tbody
               tr(v-for="input in inputs")
                 td 
-                  div(:class="!input.audiobusses.length||input.muted==='True'?'grey--text':''") 
+                  div(:class="!input.audiobusses||!input.audiobusses.length||input.muted==='True'?'grey--text':''") 
                     span.mx-2(v-show="input.muted==='True'"): v-icon(small).red--text fa-volume-mute
                     span {{ input.title }}
                 td(
                   v-for="bus in audioBusses"
-                ) 
+                )
                   v-btn(
+                    v-show="input.audiobusses"
                     block
                     @click="toggleAudioBus(bus, input)"
                     :color="input.audiobusses && input.audiobusses.includes(bus.abbr) ? 'green lighten-1' : 'grey lighten-2'"
@@ -124,7 +125,7 @@ export default class App extends Vue {
   onConnectedChanged(val: boolean, oldval: boolean) {
     const isConnected = val
 
-    // console.log('Connected changed', isConnected)
+    console.log('Connected changed', isConnected)
 
     // If not connected anymore - do not attempt to send requests for XML data
     if (!isConnected) {
@@ -173,6 +174,9 @@ export default class App extends Vue {
   @Watch('$store.state.vMixConnection.host')
   onHostChanged(val: string, oldval: string) {
     const newHost = val
+
+    console.log('New host', newHost)
+
     // @ts-ignore
     this.setVmixConnection(newHost, { debug: true })
   }
@@ -180,9 +184,18 @@ export default class App extends Vue {
   /**
    * Fire a toggle of audio bus
    */
-  async toggleAudioBus(bus: { bus: string; abbr: string }, input: { key: string; title: string }) {
+  async toggleAudioBus(
+    bus: { bus: string; abbr: string },
+    input: { key: string; title: string; audiobusses: string }
+  ) {
     // @ts-ignore
     this.execVmixCommands({ Function: 'AudioBus', Input: input.key, Value: bus.abbr })
+
+    if (input.audiobusses.includes(bus.abbr)) {
+      input.audiobusses = input.audiobusses.replace(bus.abbr, '')
+    } else {
+      input.audiobusses += `,${bus.abbr}`
+    }
   }
 }
 </script>

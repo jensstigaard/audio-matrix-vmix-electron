@@ -147,6 +147,7 @@ export default class App extends Vue {
         XmlInputMapper.mapInputs(XmlInputMapper.extractInputsFromXML(xmlContent), [
           'audiobusses',
           'muted',
+          'state',
           'title',
           'volume'
         ])

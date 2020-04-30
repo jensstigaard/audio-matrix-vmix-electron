@@ -41,6 +41,8 @@ export default class AppBar extends Vue {
       return
     }
 
+    // console.log('Dispatched to store: setHost', newHost)
+
     this.$store.dispatch('setHost', newHost)
   }
 

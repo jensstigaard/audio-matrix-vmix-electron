@@ -5,6 +5,7 @@ export default {
    * @param newHost
    */
   setHost(state: any, newHost: string) {
+    // console.log('New host set in store', newHost)
     state.vMixConnection.host = newHost
   },
 

@@ -14,27 +14,19 @@
           table#audio-matrix
             thead
               tr
-                th
+                th Input
+                th: small Vol %
                 th(v-for="bus in audioBusses")
                   div {{ bus.name }}
                   div(v-show="bus.muted"): v-icon(small).red--text fa-volume-mute
                   small(v-show="!bus.muted && bus.volume") {{ Math.round(bus.volume) }} %
             tbody
-              tr(v-for="input in inputs")
-                td 
-                  div(:class="!input.audiobusses||!input.audiobusses.length||input.muted==='True'?'grey--text':''") 
-                    span.mx-2(v-show="input.muted==='True'"): v-icon(small).red--text fa-volume-mute
-                    span {{ input.title }}
-                td(
-                  v-for="bus in audioBusses"
-                )
-                  v-btn(
-                    v-show="input.audiobusses"
-                    block
-                    @click="toggleAudioBus(bus, input)"
-                    :color="input.audiobusses && input.audiobusses.includes(bus.abbr) ? 'green lighten-1' : 'grey lighten-2'"
-                  ).elevation-0
-                    //- span {{ input.audiobusses && input.audiobusses.includes(bus.abbr) ? 'ON' : '' }}
+              vmix-input(
+                v-for="input in inputs"
+                :key="input.key"
+                :audio-busses="audioBusses"
+                :input="input"
+              )
           hr.my-8
           div.grey--text(style="text-align:center")
             div: small Inspiration from:
@@ -54,6 +46,7 @@ import xpath, { SelectedValue } from 'xpath'
 import _ from 'lodash'
 
 import AppBar from './AppBar.vue'
+import VmixInput from './components/Input.vue'
 
 const FETCH_XML_DATA_INTERVAL: number = 2000 // ms
 const TRANSITION_STEP: number = 100 // ms
@@ -62,6 +55,9 @@ const LIMIT_NUMBER_OF_INPUTS: number = 8
 
 const sleep = (m: number) => new Promise(r => setTimeout(r, m))
 
+/**
+ * Extract audio busses
+ */
 function extractAudioBusses(xmlContent: Node): { [key: string]: any } {
   const audioBussesXml: Element[] = xpath.select('//vmix/audio/*', xmlContent) as Element[]
 
@@ -106,7 +102,8 @@ function extractAudioBusses(xmlContent: Node): { [key: string]: any } {
 
 @Component({
   components: {
-    AppBar
+    AppBar,
+    VmixInput
   }
 })
 export default class App extends Vue {
@@ -114,7 +111,6 @@ export default class App extends Vue {
   audioBusses: { [key: string]: any } = {}
 
   xmlDataInterval: any | null = null
-  transitionProgress: number = 0
 
   created() {
     // @ts-ignore
@@ -149,9 +145,10 @@ export default class App extends Vue {
 
       const inputs = Object.values(
         XmlInputMapper.mapInputs(XmlInputMapper.extractInputsFromXML(xmlContent), [
-          'title',
+          'audiobusses',
           'muted',
-          'audiobusses'
+          'title',
+          'volume'
         ])
       )
 
@@ -179,23 +176,6 @@ export default class App extends Vue {
 
     // @ts-ignore
     this.setVmixConnection(newHost, { debug: true })
-  }
-
-  /**
-   * Fire a toggle of audio bus
-   */
-  async toggleAudioBus(
-    bus: { bus: string; abbr: string },
-    input: { key: string; title: string; audiobusses: string }
-  ) {
-    // @ts-ignore
-    this.execVmixCommands({ Function: 'AudioBus', Input: input.key, Value: bus.abbr })
-
-    if (input.audiobusses.includes(bus.abbr)) {
-      input.audiobusses = input.audiobusses.replace(bus.abbr, '')
-    } else {
-      input.audiobusses += `,${bus.abbr}`
-    }
   }
 }
 </script>

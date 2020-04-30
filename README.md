@@ -14,7 +14,7 @@ If you are interesting in similar apps, check out [Simple vMix switcher electron
 
 ## Downloads
 
-See the [**Releases**](../../releases) tab for a direct download of the app.
+See the [**Releases**](../../releases) tab for a direct download of the app for Windows or Mac.
 
 
 ## Project setup

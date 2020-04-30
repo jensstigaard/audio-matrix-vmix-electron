@@ -8,6 +8,8 @@ The app is oriented for touch use.
 
 You are free to clone the repository to develop your own app based in this code.
 
+If you are interesting in similar apps, check out [Simple vMix switcher electron app](https://github.com/jensstigaard/simple-vmix-switcher-electron).
+
 ## Downloads
 
 See the [**Releases**](../../releases) tab for a direct download of the app.

@@ -2,6 +2,12 @@
 v-app-bar(app color="primary" dark)
 	div: b Audio Matrix for vMix
 	v-spacer
+	v-btn(
+		small
+		@click="$store.dispatch('toggleShowAudioControls')"
+		v-text="showAudioControls?'Hide audio controls':'Show audio controls'"
+	)
+	v-spacer
 	v-combobox(
 		v-model="host"
 		label="vMix host"
@@ -44,6 +50,10 @@ export default class AppBar extends Vue {
     // console.log('Dispatched to store: setHost', newHost)
 
     this.$store.dispatch('setHost', newHost)
+  }
+
+  get showAudioControls(): boolean {
+    return this.$store.state.showAudioControls
   }
 
   get previousHosts() {

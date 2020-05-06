@@ -4,10 +4,11 @@ tr
     div(:class="inputTitleClass") 
       v-icon(small
         v-show="isInputPlaying"
-        :class="isInputMuted?'grey--text':'blue--text'"
+        :class="isInputMuted?'grey--text':'blue--text fa-beat'"
       ).mx-2.mb-1 fa-play
         v-btn.mx-2(icon v-show="isInputMuted" @click="unmuteInput"): v-icon(small).red--text fa-volume-mute
       span {{ input.title }}
+      v-chip.ml-2(small): b {{ input.number }}
   td
     small(v-if="input.hasOwnProperty('volume')") {{ Math.round(input.volume) }} %
     small(v-else).grey--text &mdash;
@@ -24,9 +25,9 @@ tr
       v-if="hasAudioBusses"
       block
       @click="toggleAudioBus(bus)"
-      :color="input.audiobusses.includes(bus.abbr) ? 'green lighten-1' : 'grey lighten-2'"
+      :color="input.audiobusses.includes(bus.abbr) ? 'primary lighten-1' : 'grey lighten-2'"
     ).elevation-0
-      v-icon(v-if="input.audiobusses.includes(bus.abbr)").green--text.text--darken-3 fa fa-fw fa-check
+      v-icon(v-if="input.audiobusses.includes(bus.abbr)").primary--text.text--darken-1 fa fa-fw fa-check
       //- v-icon(v-else).red--text.text--lighten-4 fa fa-fw fa-times
 </template>
 

@@ -29,7 +29,10 @@ It includes a dropdown menu with recently used hosts, so you can easily swap bet
 ### Audio controls
 Simply audio controls for audio busses A-G including volume control and mute/unmute.
 You can also use the button in the app bar to toggle show/hide of the audio controls in case you want the interface as simple as possible, and only with the audio matrix.
- 
+
+## Additional featuers
+Do you have a good idea for an additional feature for this app? Post an Issue or write me an email @ <jens@stigaard.info>.
+
 ## Known issues
  - Inputs without audio channels will appear in the interface, but any action will be ignored, since the input has no audio (Found by Dave Edwards - Thanks for the tip - It is a problem with the vMix API itself, and it is reported to vMix)
 

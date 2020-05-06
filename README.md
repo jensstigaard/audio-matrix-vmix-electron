@@ -19,9 +19,16 @@ If you are interesting in similar apps, check out [Simple vMix switcher electron
 See the [**Releases**](../../releases) tab for a direct download of the app for Windows or Mac.
 
 ## Features
- - Intuitive interface for toggling audiobusses on/off for inputs
- - Audio controls for audio busses A-G including volume control and mute/unmute
- - Easy change of vMix host, including dropdown with recently used hosts
+### Intuitive interface
+Clean and intuitive interface with the primarily use case for toggling audiobusses on/off for inputs
+
+### vMix host entering
+In the app bar you can easily change the vMix host or IP address.
+It includes a dropdown menu with recently used hosts, so you can easily swap between hosts.
+
+### Audio controls
+Simply audio controls for audio busses A-G including volume control and mute/unmute.
+You can also use the button in the app bar to toggle show/hide of the audio controls in case you want the interface as simple as possible, and only with the audio matrix.
  
 ## Known issues
  - Inputs without audio channels will appear in the interface, but any action will be ignored, since the input has no audio (Found by Dave Edwards - Thanks for the tip - It is a problem with the vMix API itself, and it is reported to vMix)

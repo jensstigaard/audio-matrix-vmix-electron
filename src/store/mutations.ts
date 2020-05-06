@@ -19,7 +19,7 @@ export default {
   },
 
   /**
-   * 
+   * Set show audio controls
    * @param state
    */
   setShowAudioControls(state: any, showAudioControls: boolean) {

@@ -14,12 +14,10 @@
           table#audio-matrix
             thead
               tr
-                th Input
-                th: small Vol %
+                th(style="width:40%") Input
+                th(style="width:80px"): small Vol %
                 th(v-for="bus in audioBusses")
-                  div {{ bus.name }}
-                  div(v-show="bus.muted"): v-icon(small).red--text fa-volume-mute
-                  small(v-show="!bus.muted && bus.volume") {{ Math.round(bus.volume) }} %
+                  vmix-audio-bus(:bus="bus")
             tbody
               vmix-input(
                 v-for="input in inputs"
@@ -40,69 +38,34 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Watch } from 'vue-property-decorator'
 
-import { XmlInputMapper, XmlApiDataParser, XmlOverlayChannels, XmlTransitions } from 'vmix-js-utils'
+import {
+  AudioUtility,
+  XmlAudio,
+  XmlGeneralState,
+  XmlInputMapper,
+  XmlApiDataParser,
+  XmlOverlayChannels,
+  XmlTransitions
+} from 'vmix-js-utils'
 
 import xpath, { SelectedValue } from 'xpath'
 import _ from 'lodash'
 
 import AppBar from './AppBar.vue'
+import VmixAudioBus from './components/Bus.vue'
 import VmixInput from './components/Input.vue'
+import { AudioBus } from 'vmix-js-utils/dist/types/audio-bus'
 
-const FETCH_XML_DATA_INTERVAL: number = 2000 // ms
-const TRANSITION_STEP: number = 100 // ms
+const FETCH_XML_DATA_INTERVAL: number = 500 // ms
 
 const LIMIT_NUMBER_OF_INPUTS: number = 8
 
 const sleep = (m: number) => new Promise(r => setTimeout(r, m))
 
-/**
- * Extract audio busses
- */
-function extractAudioBusses(xmlContent: Node): { [key: string]: any } {
-  const audioBussesXml: Element[] = xpath.select('//vmix/audio/*', xmlContent) as Element[]
-
-  // console.log(audioBussesXml)
-  // return
-
-  const audioBusses = audioBussesXml
-    .map((entry: Element) => {
-      if (!entry) {
-        return
-      }
-
-      // Map all base attributes of input
-      const name: string = entry.nodeName
-
-      if (name !== 'master' && !name.startsWith('bus')) {
-        return
-      }
-
-      const abbr = name === 'master' ? 'M' : name.replace('bus', '')
-
-      const attributesList = Object.values(entry.attributes)
-
-      const volumeAttr = attributesList.find((attr: Attr) => attr.name === 'volume')
-      const mutedAttr = attributesList.find((attr: Attr) => attr.name === 'muted')
-
-      // No attribute found
-      if (!volumeAttr || !mutedAttr) {
-        return
-      }
-
-      const volume: number = Number(volumeAttr.nodeValue)
-
-      const muted: boolean = String(mutedAttr.nodeValue) === 'True'
-
-      return { name, abbr, muted, volume }
-    })
-    .filter(x => x)
-
-  return _.keyBy(audioBusses, (bus: { [key: string]: any }) => bus.name)
-}
-
 @Component({
   components: {
     AppBar,
+    VmixAudioBus,
     VmixInput
   }
 })
@@ -139,7 +102,7 @@ export default class App extends Vue {
     // Request XML data each 5th second to update input titles
     // @ts-ignore
     this.$vMixConnection!.on('xml', (xmlRawData: string) => {
-      // console.log('XML RECEIVED', xmlRawData)
+      // console.log('XML RECEIVED', xmlRawData.length)
 
       const xmlContent = XmlApiDataParser.parse(xmlRawData)
 
@@ -147,6 +110,7 @@ export default class App extends Vue {
         XmlInputMapper.mapInputs(XmlInputMapper.extractInputsFromXML(xmlContent), [
           'audiobusses',
           'muted',
+          'number',
           'state',
           'title',
           'volume'
@@ -154,7 +118,16 @@ export default class App extends Vue {
       )
 
       // console.log(inputs)
-      const audioBusses = extractAudioBusses(xmlContent)
+      const audioBusses: { [key: string]: AudioBus } = _.keyBy(
+        Object.values(XmlAudio.all(xmlContent)).map((bus: AudioBus) => {
+          return {
+            ...bus,
+            // Append volumeBar to audio busses
+            volumeBar: AudioUtility.fromVolume(bus.volume).volumeBar() // Percentage on volumebar scale
+          }
+        }),
+        (bus: AudioBus) => bus.name
+      )
 
       this.inputs = inputs
       this.audioBusses = audioBusses
@@ -187,6 +160,7 @@ hr
 
 table#audio-matrix
   width: 100%
+  table-layout: fixed
 
   thead tr th, tbody tr td
     border-bottom: 1px solid #DDD
@@ -217,4 +191,27 @@ table#audio-matrix
   width: 10px
   padding: 0px
   font-weight: bold
+
+// Font-awesome icon "heartbeat" animation
+// Inspiration: https://codepen.io/Grilly86/pen/KMKZap
+.fa-beat
+  animation: fa-beat 3s ease infinite
+
+@keyframes fa-beat
+  0%
+    transform: scale(1)
+  5%
+    transform: scale(1.25)
+  20%
+    transform: scale(1)
+  30%
+    transform: scale(1)
+  35%
+    transform: scale(1.25)
+  50%
+    transform: scale(1)
+  55%
+    transform: scale(1.25)
+  70%
+    transform: scale(1)
 </style>

@@ -26,7 +26,8 @@ export default {
   },
 
   /**
-   * 
+   * Toggle show audio controls
+   *
    * @param param0
    */
   toggleShowAudioControls({ state, commit }: { commit: Function; state: any }) {

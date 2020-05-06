@@ -4,5 +4,7 @@ export default {
     debug: false
   },
 
-  previousVmixConnectionHosts: []
+  previousVmixConnectionHosts: [],
+
+  showAudioControls: false
 }

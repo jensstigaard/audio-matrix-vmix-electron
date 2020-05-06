@@ -23,5 +23,13 @@ export default {
     }
 
     commit('addHostToPreviousConnectedVmixHosts', state.vMixConnection.host)
+  },
+
+  /**
+   * 
+   * @param param0
+   */
+  toggleShowAudioControls({ state, commit }: { commit: Function; state: any }) {
+    commit('setShowAudioControls', !state.showAudioControls)
   }
 }

@@ -16,5 +16,13 @@ export default {
    */
   addHostToPreviousConnectedVmixHosts(state: any, host: string) {
     state.previousVmixConnectionHosts.push(host)
+  },
+
+  /**
+   * 
+   * @param state
+   */
+  setShowAudioControls(state: any, showAudioControls: boolean) {
+    state.showAudioControls = showAudioControls
   }
 }

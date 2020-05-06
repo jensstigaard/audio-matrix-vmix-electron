@@ -5,10 +5,10 @@ tr
       v-icon(small
         v-show="isInputPlaying"
         :class="isInputMuted?'grey--text':'blue--text fa-beat'"
-      ).mx-2.mb-1 fa-play
+      ).mr-5.mb-1 fa-play
         v-btn.mx-2(icon v-show="isInputMuted" @click="unmuteInput"): v-icon(small).red--text fa-volume-mute
       span {{ input.title }}
-      v-chip.ml-2(small): b {{ input.number }}
+  td: b {{ input.number }}
   td
     small(v-if="input.hasOwnProperty('volume')") {{ Math.round(input.volume) }} %
     small(v-else).grey--text &mdash;

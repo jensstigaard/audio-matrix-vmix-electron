@@ -15,6 +15,7 @@
             thead
               tr
                 th(style="width:40%") Input
+                th(style="width:40px") #
                 th(style="width:80px"): small Vol %
                 th(v-for="bus in audioBusses")
                   vmix-audio-bus(:bus="bus")

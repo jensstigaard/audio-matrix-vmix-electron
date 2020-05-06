@@ -9189,15 +9189,14 @@ vmix-js-utils@^3.2.0:
     xmldom "^0.2.1"
     xpath "^0.0.27"
 
-vmix-js-utils@^3.4.0:
-  version "3.4.0"
-  resolved "https://registry.yarnpkg.com/vmix-js-utils/-/vmix-js-utils-3.4.0.tgz#7dfb8cf602347254efff1fb910b16fdf090fb82b"
-  integrity sha512-AuWoo5x4elKv+wFMZqA+j7IRNaAZdPm4xyjG5lxRFoXVUbEwNnLYw3ro5Ag0Z9E0iWQnbNz591hX2rwo4IlEaQ==
+vmix-js-utils@^3.8.1:
+  version "3.8.1"
+  resolved "https://registry.yarnpkg.com/vmix-js-utils/-/vmix-js-utils-3.8.1.tgz#82e74659709f559defe7a1f7440d505d6bd2ebb6"
+  integrity sha512-JNhlRseT3yzherxRYx5mXb2bN7wHe4CSndd398qNME/XR/PYcnTCWDA+h3ucw0u2tG4Fta26shHSS4TcHYLVCw==
   dependencies:
-    axios "^0.19.2"
     lodash "^4.17.15"
     querystring "^0.2.0"
-    xmldom "^0.2.1"
+    xmldom "^0.3.0"
     xpath "^0.0.27"
 
 void-elements@^2.0.1:
@@ -9694,6 +9693,11 @@ xmldom@^0.2.1:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/xmldom/-/xmldom-0.2.1.tgz#cac9465066f161e1c3302793ea4dbe59c518274f"
   integrity sha512-kXXiYvmblIgEemGeB75y97FyaZavx6SQhGppLw5TKWAD2Wd0KAly0g23eVLh17YcpxZpnFym1Qk/eaRjy1APPg==
+
+xmldom@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/xmldom/-/xmldom-0.3.0.tgz#e625457f4300b5df9c2e1ecb776147ece47f3e5a"
+  integrity sha512-z9s6k3wxE+aZHgXYxSTpGDo7BYOUfJsIRyoZiX6HTjwpwfS2wpQBQKa2fD+ShLyPkqDYo5ud7KitmLZ2Cd6r0g==
 
 xpath@^0.0.27:
   version "0.0.27"

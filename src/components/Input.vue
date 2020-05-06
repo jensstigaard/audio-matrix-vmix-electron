@@ -1,13 +1,29 @@
 <template lang="pug">
 tr
-  td 
+  td(style="overflow:hidden;text-overflow:ellipsis")
     div(:class="inputTitleClass") 
-      v-icon(small
-        v-show="isInputPlaying"
-        :class="isInputMuted?'grey--text':'blue--text fa-beat'"
-      ).mr-5.mb-1 fa-play
-        v-btn.mx-2(icon v-show="isInputMuted" @click="unmuteInput"): v-icon(small).red--text fa-volume-mute
-      span {{ input.title }}
+      v-icon(
+        small
+        v-show="['Video', 'VideoList', 'AudioFile'].includes(input.type)"
+        :class="playingIconClass"
+        v-text="playingIconText"
+      ).mr-5.mb-1
+      
+      v-tooltip(v-if="$store.state.showAudioControls && isInputMuted" top)
+        template(v-slot:activator="{ on }")
+          v-btn.mx-2(
+            icon
+            v-on="on"
+            @click="unmuteInput"
+          ): v-icon(small).red--text fa-volume-mute
+        span Unmute input
+      v-btn.mx-2(
+        icon
+        disabled
+        v-else-if="isInputMuted"
+      ): v-icon(small).red--text fa-volume-mute
+
+      span(style="white-space:nowrap") {{ input.title }}
   td: b {{ input.number }}
   td
     small(v-if="input.hasOwnProperty('volume')") {{ Math.round(input.volume) }} %
@@ -21,36 +37,25 @@ tr
     v-else
     v-for="bus in audioBusses"
   )
-    v-btn(
-      v-if="hasAudioBusses"
-      block
-      @click="toggleAudioBus(bus)"
-      :color="input.audiobusses.includes(bus.abbr) ? 'primary lighten-1' : 'grey lighten-2'"
-    ).elevation-0
-      v-icon(v-if="input.audiobusses.includes(bus.abbr)").primary--text.text--darken-1 fa fa-fw fa-check
-      //- v-icon(v-else).red--text.text--lighten-4 fa fa-fw fa-times
+    //- style="vertical-align:top"
+    input-bus-button(:input="input" :bus="bus")
 </template>
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
 
-// @ts-ignore
-import LongPress from 'vue-directive-long-press'
+import { AudioBus } from 'vmix-js-utils/dist/types/audio-bus'
+import InputBusButton from './InputBusButton.vue'
 
 @Component({
-  directives: {
-    'long-press': LongPress
+  components: {
+    InputBusButton
   }
 })
 export default class VmixInput extends Vue {
   @Prop(Object) readonly input!: any
   @Prop(Object) readonly audioBusses!: Object
   @Prop(Number) readonly number!: Number
-
-  // For registering long presses
-  currentPress: { [key: string]: any } = {
-    isLongPress: false
-  }
 
   get isInputPlaying(): boolean {
     // @ts-ignore
@@ -61,65 +66,83 @@ export default class VmixInput extends Vue {
     return this.input.muted === 'True'
   }
 
+  get isInputActive(): boolean {
+    return this.isInputPlaying && !this.isInputMuted
+  }
+
+  get isOnAir(): boolean {
+    return this.input.audiobusses && this.input.audiobusses.includes('M')
+  }
+
+  get isInputActiveOnAir(): boolean {
+    return this.isInputActive && this.isOnAir
+  }
+
   get hasAudioBusses(): boolean {
     return this.input.hasOwnProperty('audiobusses')
   }
 
+  get playingIconText(): string {
+    if (this.isOnAir) {
+      return 'fa-circle'
+    }
+
+    if (this.isInputPlaying) {
+      return 'fa-play'
+    }
+
+    return 'fa-pause'
+  }
+
+  get playingIconClass() {
+    if (this.isInputActiveOnAir) {
+      return 'red--text fa-beat'
+    }
+
+    if (this.isOnAir && this.isInputPlaying && this.isInputMuted) {
+      return 'grey--text fa-beat'
+    }
+
+    if (this.input.program) {
+      return 'red--text'
+    }
+
+    if (this.input.preview) {
+      return 'green--text'
+    }
+
+    if (this.isInputActive) {
+      return 'blue--text fa-beat'
+    }
+
+    return 'grey--text'
+  }
+
   get inputTitleClass(): string {
-    return !this.hasAudioBusses || !this.input.audiobusses.length || this.input.muted === 'True'
-      ? 'grey--text'
-      : ''
-  }
-
-  onLongPressStart() {
-    // triggers after 300ms of mousedown
-    console.log('Long Press detected... waiting for mouse up')
-    this.currentPress.isLongPress = true
-  }
-
-  onLongPressStop(event: Event) {
-    // triggers on mouseup of document
-
-    if (this.currentPress.isLongPress) {
-      // console.log('Mouse up was long click')
-      this.$emit('long-click')
-    } else {
-      // console.log('Mouse up was short click')
-      this.$emit('click')
+    if (this.input.program) {
+      return 'red--text font-weight-bold'
     }
 
-    // Reset current press infoƒ
-    this.currentPress.isLongPress = false
-  }
-
-  /**
-   * Fire a toggle of audio bus
-   */
-  async toggleAudioBus(bus: { bus: string; abbr: string }) {
-    // @ts-ignore
-    this.execVmixCommands({ Function: 'AudioBus', Input: this.input.key, Value: bus.abbr })
-
-    // Toggle manually state for input - until xml interval picks up
-    if (this.input.audiobusses.includes(bus.abbr)) {
-      this.input.audiobusses = this.input.audiobusses.replace(bus.abbr, '')
-    } else {
-      this.input.audiobusses += `,${bus.abbr}`
+    if (this.input.preview) {
+      return 'green--text text--darken-1'
     }
+
+    if (!this.hasAudioBusses || !this.input.audiobusses.length || this.input.muted === 'True') {
+      return 'grey--text'
+    }
+
+    return ''
   }
 
   /**
    * Fire a toggle of audio bus
    */
   async unmuteInput() {
+    // Toggle manually muted state for input - until xml interval picks up
+    this.input.muted = 'False'
+
     // @ts-ignore
     this.execVmixCommands({ Function: 'AudioOn', Input: this.input.key })
-
-    // Toggle manually muted state for input - until xml interval picks up
-    if (this.input.muted === 'True') {
-      this.input.muted = 'False'
-    } else {
-      this.input.muted = 'True'
-    }
   }
 }
 </script>

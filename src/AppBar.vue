@@ -2,12 +2,20 @@
 v-app-bar(app color="primary" dark)
 	div: b Audio Matrix for vMix
 	v-spacer
+	// Buttons
 	v-btn(
 		small
 		@click="$store.dispatch('toggleShowAudioControls')"
 		v-text="showAudioControls?'Hide audio controls':'Show audio controls'"
 	)
+	//- v-btn(
+	//- 	small
+	//- 	@click="$store.dispatch('toggleShowInputsWithoutAudio')"
+	//- 	v-text="showInputsWithoutAudio?'Hide inputs without audio':'Show inputs without audio'"
+	//- )
+
 	v-spacer
+	// Hostname textfield
 	v-combobox(
 		v-model="host"
 		label="vMix host"

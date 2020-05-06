@@ -71,8 +71,10 @@ const sleep = (m: number) => new Promise(r => setTimeout(r, m))
   }
 })
 export default class App extends Vue {
-  inputs: any[] = []
   audioBusses: { [key: string]: any } = {}
+  allInputs: any[] = []
+
+  tallyInfo: any | null = null
 
   xmlDataInterval: any | null = null
 
@@ -130,8 +132,8 @@ export default class App extends Vue {
         (bus: AudioBus) => bus.name
       )
 
-      this.inputs = inputs
       this.audioBusses = audioBusses
+      this.allInputs = inputs
     })
 
     this.xmlDataInterval = setInterval(() => {
@@ -141,6 +143,14 @@ export default class App extends Vue {
 
     // @ts-ignore
     this.$vMixConnection!.send('XML')
+
+    // @ts-ignore
+    this.$vMixConnection!.send('SUBSCRIBE TALLY')
+    // @ts-ignore
+    this.$vMixConnection!.on('tally', (tallySummary: object) => {
+      // console.log('Tally summary:', tallySummary)
+      this.tallyInfo = tallySummary
+    })
   }
 
   @Watch('$store.state.vMixConnection.host')
@@ -151,6 +161,30 @@ export default class App extends Vue {
 
     // @ts-ignore
     this.setVmixConnection(newHost, { debug: true })
+  }
+
+  get inputs(): any {
+    const inputs = JSON.parse(JSON.stringify(this.allInputs)).map((input: any, index: number) => {
+      const number = index + 1
+      input.preview = false
+      input.program = false
+      return input
+    })
+
+    if (this.tallyInfo) {
+      this.tallyInfo.program
+        .filter((inputInProgram: number) => inputs.length >= inputInProgram)
+        .forEach((inputInProgram: number) => {
+          inputs[inputInProgram - 1].program = true
+        })
+      this.tallyInfo.preview
+        .filter((inputInPreview: number) => inputs.length >= inputInPreview)
+        .forEach((inputInPreview: number) => {
+          inputs[inputInPreview - 1].preview = true
+        })
+    }
+
+    return inputs
   }
 }
 </script>
@@ -196,23 +230,17 @@ table#audio-matrix
 // Font-awesome icon "heartbeat" animation
 // Inspiration: https://codepen.io/Grilly86/pen/KMKZap
 .fa-beat
-  animation: fa-beat 3s ease infinite
+  animation: fa-beat 1.5s ease infinite
 
 @keyframes fa-beat
   0%
     transform: scale(1)
-  5%
-    transform: scale(1.25)
   20%
-    transform: scale(1)
-  30%
-    transform: scale(1)
+    transform: scale(1.25)
   35%
     transform: scale(1.25)
-  50%
+  90%
     transform: scale(1)
-  55%
-    transform: scale(1.25)
-  70%
+  90%
     transform: scale(1)
 </style>

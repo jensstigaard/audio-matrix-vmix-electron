@@ -6,7 +6,7 @@ Simple Audio Matrix vMix app built with [ElectronJS](https://electronjs.org). El
 
 The app is oriented for touch use.
 
-![Audio Matrix vMix Electron](./readme_assets/overview_040.png "Application overview")
+![Audio Matrix vMix Electron](./readme_assets/overview_050.png "Application overview")
 
 You are free to clone the repository to develop your own app based in this code.
 

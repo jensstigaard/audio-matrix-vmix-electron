@@ -6,8 +6,8 @@ v-app-bar(app color="primary" dark)
 	v-btn(
 		small
 		@click="$store.dispatch('toggleShowAudioControls')"
-		v-text="showAudioControls?'Hide audio controls':'Show audio controls'"
-	)
+	) {{ showAudioControls ? 'Hide audio controls' : 'Show audio controls'}}
+		
 	//- v-btn(
 	//- 	small
 	//- 	@click="$store.dispatch('toggleShowInputsWithoutAudio')"

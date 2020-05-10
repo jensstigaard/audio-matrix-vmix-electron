@@ -36,6 +36,10 @@ Do you have a good idea for an additional feature for this app? Post an Issue or
 ## Known issues
  - Inputs without audio channels will appear in the interface, but any action will be ignored, since the input has no audio (Found by Dave Edwards - Thanks for the tip - It is a problem with the vMix API itself, and it is reported to vMix)
 
+## Inspiration from
+This project is inspired by [vMatrix Audio Routing by thsorensen1](https://forums.vmix.com/posts/t21233-vMatrix-audio-routing) and [vMix Audio Matrix by Håvard Njåstad](https://github.com/Haavard15/vMixAudioMatrix).
+        
+
 ## Project setup
 ### Install dependencies
 ```

@@ -42,7 +42,7 @@ This project is inspired by
  * [vMix Audio Matrix by Håvard Njåstad](https://github.com/Haavard15/vMixAudioMatrix)
 
 ## Contributors
-[See list of contributors for this repo](./graphs/contributors)
+[See list of contributors for this repo](../../graphs/contributors)
 
 ## Project setup
 ### Install dependencies

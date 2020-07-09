@@ -1,5 +1,5 @@
 # audio-matrix-vmix-electron
-[![Audio Matrix vMix Electron](https://img.shields.io/github/downloads/jensstigaard/audio-matrix-vmix-electron/total.svg)]()
+[![Audio Matrix vMix Electron](https://img.shields.io/github/downloads/jensstigaard/audio-matrix-vmix-electron/total.svg)]
 
 
 Simple Audio Matrix vMix app built with [ElectronJS](https://electronjs.org). ElectronJS is a cross-platform framework allowing the app to be built for each Windows, Mac or Linux. 
@@ -30,8 +30,8 @@ It includes a dropdown menu with recently used hosts, so you can easily swap bet
 Simply audio controls for audio busses A-G including volume control and mute/unmute.
 You can also use the button in the app bar to toggle show/hide of the audio controls in case you want the interface as simple as possible, and only with the audio matrix.
 
-## Additional featuers
-Do you have a good idea for an additional feature for this app? Post an Issue or write me an email @ <jens@stigaard.info>.
+## Additional features
+Do you have a good idea for an additional feature for this app? Post an Issue or write me an email at <jens@stigaard.info>.
 
 ## Known issues
  - Inputs without audio channels will appear in the interface, but any action will be ignored, since the input has no audio (Found by Dave Edwards - Thanks for the tip - It is a problem with the vMix API itself, and it is reported to vMix)
@@ -40,7 +40,9 @@ Do you have a good idea for an additional feature for this app? Post an Issue or
 This project is inspired by 
  * [vMatrix Audio Routing by thsorensen1](https://forums.vmix.com/posts/t21233-vMatrix-audio-routing)
  * [vMix Audio Matrix by Håvard Njåstad](https://github.com/Haavard15/vMixAudioMatrix)
-        
+
+## Contributors
+[See list of contributors for this repo](../contributors)
 
 ## Project setup
 ### Install dependencies

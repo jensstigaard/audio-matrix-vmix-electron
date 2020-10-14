@@ -19,7 +19,7 @@
   "main": "background.js",
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.12.1",
-    "electron": "^8.3",
+    "electron": "^8.5",
     "lodash": "^4.17.19",
     "node-vmix": "^1.2.0",
     "vmix-js-utils": "^3.8.1",

@@ -11,9 +11,9 @@ export class vMixConnectionPluginStore {
     data: {
       internal: {
         connection: null,
-        connected: false
-      }
-    }
+        connected: false,
+      },
+    },
   })
 
   get connection() {
@@ -51,11 +51,11 @@ const vMixConnectionPlugin = {
     Vue.mixin({
       beforeCreate() {
         this.$vMixConnection = store
-      }
+      },
     })
 
     // Global method - set vMix connection
-    Vue.prototype.setVmixConnection = function(
+    Vue.prototype.setVmixConnection = function (
       host: string,
       options: object = {},
       keepListeners: boolean = false
@@ -67,10 +67,10 @@ const vMixConnectionPlugin = {
       this.$vMixConnection.setConnection(host, options)
     }
 
-    Vue.prototype.execVmixCommands = function(commands: any) {
+    Vue.prototype.execVmixCommands = function (commands: any) {
       this.$vMixConnection.send(commands)
     }
-  }
+  },
 }
 
 export default vMixConnectionPlugin

@@ -1,10 +1,10 @@
 export default {
   vMixConnection: {
     host: '127.0.0.1',
-    debug: false
+    debug: false,
   },
 
   previousVmixConnectionHosts: [],
 
-  showAudioControls: false
+  showAudioControls: false,
 }

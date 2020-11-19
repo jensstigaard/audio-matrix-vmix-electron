@@ -32,5 +32,5 @@ export default {
    */
   toggleShowAudioControls({ state, commit }: { commit: Function; state: any }) {
     commit('setShowAudioControls', !state.showAudioControls)
-  }
+  },
 }

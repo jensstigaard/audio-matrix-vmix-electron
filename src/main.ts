@@ -13,5 +13,5 @@ Vue.use(vMixConnectionPlugin, new vMixConnectionPluginStore())
 new Vue({
   store,
   vuetify,
-  render: h => h(App)
+  render: (h) => h(App),
 }).$mount('#app')

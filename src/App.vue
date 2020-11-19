@@ -46,7 +46,7 @@ import {
   XmlInputMapper,
   XmlApiDataParser,
   XmlOverlayChannels,
-  XmlTransitions
+  XmlTransitions,
 } from 'vmix-js-utils'
 
 import xpath, { SelectedValue } from 'xpath'
@@ -61,14 +61,14 @@ const FETCH_XML_DATA_INTERVAL: number = 500 // ms
 
 const LIMIT_NUMBER_OF_INPUTS: number = 8
 
-const sleep = (m: number) => new Promise(r => setTimeout(r, m))
+const sleep = (m: number) => new Promise((r) => setTimeout(r, m))
 
 @Component({
   components: {
     AppBar,
     VmixAudioBus,
-    VmixInput
-  }
+    VmixInput,
+  },
 })
 export default class App extends Vue {
   audioBusses: { [key: string]: any } = {}
@@ -116,7 +116,7 @@ export default class App extends Vue {
           'number',
           'state',
           'title',
-          'volume'
+          'volume',
         ])
       )
 
@@ -126,7 +126,7 @@ export default class App extends Vue {
           return {
             ...bus,
             // Append volumeBar to audio busses
-            volumeBar: AudioUtility.fromVolume(bus.volume).volumeBar() // Percentage on volumebar scale
+            volumeBar: AudioUtility.fromVolume(bus.volume).volumeBar(), // Percentage on volumebar scale
           }
         }),
         (bus: AudioBus) => bus.name

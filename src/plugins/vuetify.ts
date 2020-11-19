@@ -9,11 +9,11 @@ Vue.use(Vuetify)
 export default new Vuetify({
   // Use Font Awesome icons
   icons: {
-    iconfont: 'fa'
+    iconfont: 'fa',
   },
 
   // Defaults to light theme
   theme: {
-    dark: false
-  }
+    dark: false,
+  },
 })

@@ -49,8 +49,8 @@ import InputBusButton from './InputBusButton.vue'
 
 @Component({
   components: {
-    InputBusButton
-  }
+    InputBusButton,
+  },
 })
 export default class VmixInput extends Vue {
   @Prop(Object) readonly input!: any

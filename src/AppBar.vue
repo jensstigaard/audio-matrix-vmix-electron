@@ -36,7 +36,7 @@ import Component from 'vue-class-component'
 import { Watch, Prop } from 'vue-property-decorator'
 
 @Component({
-  components: {}
+  components: {},
 })
 export default class AppBar extends Vue {
   host: string = ''

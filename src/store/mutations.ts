@@ -24,5 +24,5 @@ export default {
    */
   setShowAudioControls(state: any, showAudioControls: boolean) {
     state.showAudioControls = showAudioControls
-  }
+  },
 }

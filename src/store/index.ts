@@ -19,6 +19,10 @@ export default new Vuex.Store({
 
   modules: {},
 
-  plugins: [createPersistedState(), createSharedMutations()],
-  strict: process.env.NODE_ENV !== 'production'
+  plugins: [
+    // Persisted state
+    createPersistedState(),
+    createSharedMutations(),
+  ],
+  strict: process.env.NODE_ENV !== 'production',
 })

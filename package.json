@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15",
-    "electron": "8.5.5",
+    "electron": "^10.1.6",
     "lodash": "^4.17",
     "node-vmix": "^1.3",
     "vmix-js-utils": "^3",

@@ -1,7 +1,7 @@
 {
   "name": "audio-matrix-vmix-electron",
   "productName": "Audio Matrix vMix Electron",
-  "version": "0.5.3",
+  "version": "1.0.0",
   "private": true,
   "author": {
     "name": "Jens Grønhøj Stigaard",

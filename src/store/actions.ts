@@ -33,4 +33,17 @@ export default {
   toggleShowAudioControls({ state, commit }: { commit: Function; state: any }) {
     commit('setShowAudioControls', !state.showAudioControls)
   },
+
+  /**
+   * Set custom bus label
+   *
+   * @param param0
+   * @param param1
+   */
+  setCustomBusLabel(
+    { commit }: { commit: Function; state: any },
+    { bus, label }: { bus: string; label: string }
+  ) {
+    commit('setCustomBusLabel', { bus, label })
+  },
 }

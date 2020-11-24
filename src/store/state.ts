@@ -7,4 +7,6 @@ export default {
   previousVmixConnectionHosts: [],
 
   showAudioControls: false,
+
+  customBusLabels: {},
 }

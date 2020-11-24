@@ -25,4 +25,19 @@ export default {
   setShowAudioControls(state: any, showAudioControls: boolean) {
     state.showAudioControls = showAudioControls
   },
+
+  /**
+   * Set show audio controls
+   * @param state
+   */
+  setCustomBusLabel(state: any, { bus, label }: { bus: string; label: string }) {
+    state.customBusLabels[bus] = label
+  },
+  /**
+   * Set show audio controls
+   * @param state
+   */
+  removeCustomBusLabel(state: any, bus: string) {
+    delete state.customBusLabels[bus]
+  },
 }

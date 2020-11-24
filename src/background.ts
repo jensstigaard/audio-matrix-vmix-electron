@@ -143,7 +143,7 @@ const template = [
             },
             {
               label: 'Toggle visibility of inputs without audio',
-              accelerator: process.platform === 'darwin' ? 'Alt+Cmd+A' : 'Ctrl+Shift+A',
+              accelerator: process.platform === 'darwin' ? 'Alt+Cmd+I' : 'Ctrl+Shift+I',
               click: async () => {
                 store.dispatch('toggleShowInputsWithoutAudio')
               },
@@ -166,7 +166,7 @@ const template = [
             },
             {
               label: 'Toggle visibility of inputs without audio',
-              accelerator: process.platform === 'darwin' ? 'Alt+Cmd+A' : 'Ctrl+Shift+A',
+              accelerator: process.platform === 'darwin' ? 'Alt+Cmd+I' : 'Ctrl+Shift+I',
               click: async () => {
                 store.dispatch('toggleShowInputsWithoutAudio')
               },

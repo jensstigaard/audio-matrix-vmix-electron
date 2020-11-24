@@ -1,51 +1,56 @@
 <template lang="pug">
 tr
-  td(style="overflow:hidden;text-overflow:ellipsis")
-    div(:class="inputTitleClass") 
-      v-icon(
-        small
-        v-show="['Video', 'VideoList', 'AudioFile'].includes(input.type)"
-        :class="playingIconClass"
-        v-text="playingIconText"
-      ).mr-5.mb-1
-      
-      v-tooltip(v-if="$store.state.showAudioControls && isInputMuted" top)
-        template(v-slot:activator="{ on }")
-          v-btn.mx-2(
-            icon
-            v-on="on"
-            @click="unmuteInput"
-          ): v-icon(small).red--text fa-volume-mute
-        span Unmute input
-      v-btn.mx-2(
-        icon
-        disabled
-        v-else-if="isInputMuted"
-      ): v-icon(small).red--text fa-volume-mute
+  td(style='overflow:hidden;text-overflow:ellipsis')
+    div(:class='inputTitleClass') 
+      v-icon.mr-5.mb-1(
+        small,
+        v-show='["Video", "VideoList", "AudioFile"].includes(input.type)',
+        :class='playingIconClass',
+        v-text='playingIconText'
+      )
 
-      span(style="white-space:nowrap") {{ input.title }}
+      v-tooltip(v-if='$store.state.showAudioControls && isInputMuted', top)
+        template(v-slot:activator='{ on }')
+          v-btn.mx-2(icon, v-on='on', @click='unmuteInput'): v-icon.red--text(small) fa-volume-mute
+        span Unmute input
+      v-btn.mx-2(icon, disabled, v-else-if='isInputMuted'): v-icon.red--text(small) fa-volume-mute
+
+      span(style='white-space:nowrap') {{ input.title }}
   td: b {{ input.number }}
-  td
-    small(v-if="input.hasOwnProperty('volume')") {{ Math.round(input.volume) }} %
-    small(v-else).grey--text &mdash;
-  td(
-    v-if="!hasAudioBusses"
-    :colspan="Object.values(audioBusses).length"
-    style="text-align:center"
-  ).grey--text &mdash;
-  td(
-    v-else
-    v-for="bus in audioBusses"
-  )
+  td(v-if='input.hasOwnProperty("volume")')
+    .text-center(v-if='!showAudioControls') {{ Math.round(input.volume) }} %
+    v-row.ma-0.pa-0(v-else, dense)
+      v-col.pa-0.pt-md-3(cols='12', md='4'): small {{ Math.round(input.volume) }} %
+      v-col.pa-0(cols='12', md='8')
+        v-slider.mt-3.mb-0(
+          v-model='input.volumeBar',
+          :min='0',
+          :max='100',
+          dense,
+          color='primary',
+          track-color='primary',
+          @input='updateVolume'
+        )
+        //- :color='isInputMuted ? "grey lighten-1" : "primary"',
+        //- :track-color='isInputMuted ? "grey" : "primary"',
+  td.grey--text(
+    v-if='!hasAudioBusses',
+    :colspan='Object.values(audioBusses).length + 1',
+    style='text-align:center'
+  ) &mdash;
+  td(v-else, v-for='bus in audioBusses')
     //- style="vertical-align:top"
-    input-bus-button(:input="input" :bus="bus")
+    input-bus-button(:input='input', :bus='bus')
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator'
+import _ from 'lodash'
+import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 
 import { AudioBus } from 'vmix-js-utils/dist/types/audio-bus'
 import InputBusButton from './InputBusButton.vue'
+
+const THROTTLE_RATE = 100
 
 @Component({
   components: {
@@ -56,6 +61,12 @@ export default class VmixInput extends Vue {
   @Prop(Object) readonly input!: any
   @Prop(Object) readonly audioBusses!: Object
   @Prop(Number) readonly number!: Number
+
+  volumeControlPressed: boolean = false
+
+  get showAudioControls(): boolean {
+    return this.$store.state.showAudioControls
+  }
 
   get isInputPlaying(): boolean {
     // @ts-ignore
@@ -144,5 +155,19 @@ export default class VmixInput extends Vue {
     // @ts-ignore
     this.execVmixCommands({ Function: 'AudioOn', Input: this.input.key })
   }
+
+  updateVolume = _.throttle((volumeBar: number) => {
+    // const volume = Number(AudioUtility.fromVolumeBar(volumeBar).volume()).toFixed(0)
+    const command = {
+      Function: `SetVolume`,
+      Input: this.input.number,
+      Value: volumeBar,
+    }
+
+    // console.log('SENT TO VMIX', command)
+
+    // @ts-ignore
+    this.execVmixCommands(command)
+  }, THROTTLE_RATE)
 }
 </script>

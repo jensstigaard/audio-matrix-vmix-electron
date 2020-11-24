@@ -8,7 +8,7 @@ v-app
         v-icon(color='orange') fa-exclamation-circle
         div: b Not yet connected to vMix instance...
         div Please check whether the entered IP address ({{ $store.state.vMixConnection.host }}) is correct...
-    v-container(fluid, v-else).px-0
+    v-container.px-0(fluid, v-else)
       div(v-if='!inputs.length') No inputs found...
       div(v-else)
         table#audio-matrix
@@ -17,7 +17,7 @@ v-app
           //-   col(:span='audioBusses.length', style='width:50%')
           thead
             tr
-              th(style="width:30%") Input
+              th(style='width:30%') Input
               th(style='width:40px') #
               th(style='width:100px'): small Vol %
               th(v-for='bus in audioBusses', style='width:100px')
@@ -25,6 +25,7 @@ v-app
           tbody
             vmix-input(
               v-for='input in inputs',
+              v-if='input.hasOwnProperty("volume") || $store.state.showInputsWithoutAudio',
               :key='input.key',
               :audio-busses='audioBusses',
               :input='input'

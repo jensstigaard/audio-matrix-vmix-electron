@@ -27,12 +27,21 @@ export default {
   },
 
   /**
+   * Set show inputs without audio
+   * @param state
+   */
+  setShowInputsWithoutAudio(state: any, value: boolean) {
+    state.showInputsWithoutAudio = value
+  },
+
+  /**
    * Set show audio controls
    * @param state
    */
   setCustomBusLabel(state: any, { bus, label }: { bus: string; label: string }) {
     state.customBusLabels[bus] = label
   },
+
   /**
    * Set show audio controls
    * @param state

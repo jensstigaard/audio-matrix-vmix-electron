@@ -35,6 +35,15 @@ export default {
   },
 
   /**
+   * Toggle show inputs without audio
+   *
+   * @param param0
+   */
+  toggleShowInputsWithoutAudio({ state, commit }: { commit: Function; state: any }) {
+    commit('setShowInputsWithoutAudio', !state.showInputsWithoutAudio)
+  },
+
+  /**
    * Set custom bus label
    *
    * @param param0

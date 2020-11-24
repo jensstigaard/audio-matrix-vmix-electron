@@ -1,12 +1,12 @@
 <template lang="pug">
-v-app-bar(app color="primary" dark)
+v-app-bar(app color="primary" dark dense)
 	div: b Audio Matrix for vMix
 	v-spacer
 	// Buttons
-	v-btn(
-		small
-		@click="$store.dispatch('toggleShowAudioControls')"
-	) {{ showAudioControls ? 'Hide audio controls' : 'Show audio controls'}}
+	//- v-btn(
+	//- 	small
+	//- 	@click="$store.dispatch('toggleShowAudioControls')"
+	//- ) {{ showAudioControls ? 'Hide audio controls' : 'Show audio controls'}}
 		
 	//- v-btn(
 	//- 	small
@@ -23,7 +23,8 @@ v-app-bar(app color="primary" dark)
 		@keyup.enter="changeHost"
 		@blur="changeHost"
 		:hide-selected="true"
-	).mt-8
+		dense
+	).mt-7
 	v-icon#connection-status.ml-2.mt-2(
 		small 
 		:class="$vMixConnection.connected?'green--text':'red--text'" 

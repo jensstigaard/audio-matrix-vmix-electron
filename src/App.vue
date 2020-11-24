@@ -1,37 +1,47 @@
 <template lang="pug">
-  v-app
-    app-bar
+v-app
+  app-bar
 
-    v-main
-      v-container(v-if="!$vMixConnection.connected")
-        div.text-center
-          v-icon(color="orange") fa-exclamation-circle
-          div: b Not yet connected to vMix instance...
-          div Please check whether the entered IP address ({{ $store.state.vMixConnection.host }}) is correct...
-      v-container(fluid v-else)
-        div(v-if="!inputs.length") No inputs found...
-        div(v-else)
-          table#audio-matrix
-            thead
-              tr
-                th(style="width:40%") Input
-                th(style="width:40px") #
-                th(style="width:80px"): small Vol %
-                th(v-for="bus in audioBusses")
-                  vmix-audio-bus(:bus="bus")
-            tbody
-              vmix-input(
-                v-for="input in inputs"
-                :key="input.key"
-                :audio-busses="audioBusses"
-                :input="input"
-              )
-          hr.my-8
-          div.grey--text(style="text-align:center")
-            div: small Inspiration from:
-            div: small <a target="_blank" href="https://forums.vmix.com/posts/t21233-vMatrix-audio-routing">thsorensen1</a> &amp; <a href="https://github.com/Haavard15/vMixAudioMatrix" target="_blank">Håvard Njåstad</a>
-          //- pre {{ inputs }}
+  v-main
+    v-container(v-if='!$vMixConnection.connected')
+      .text-center
+        v-icon(color='orange') fa-exclamation-circle
+        div: b Not yet connected to vMix instance...
+        div Please check whether the entered IP address ({{ $store.state.vMixConnection.host }}) is correct...
+    v-container(fluid, v-else).px-0
+      div(v-if='!inputs.length') No inputs found...
+      div(v-else)
+        table#audio-matrix
+          //- colgroup
+          //-   col(span='3', style='width:50%')
+          //-   col(:span='audioBusses.length', style='width:50%')
+          thead
+            tr
+              th(style="width:30%") Input
+              th(style='width:40px') #
+              th(style='width:100px'): small Vol %
+              th(v-for='bus in audioBusses', style='width:100px')
+                vmix-audio-bus(:bus='bus')
+          tbody
+            vmix-input(
+              v-for='input in inputs',
+              :key='input.key',
+              :audio-busses='audioBusses',
+              :input='input'
+            )
 
+        //- hr.my-8
+
+  v-footer.grey--text(padless, style='font-size: 10pt')
+    v-col.text-center(cols='12')
+      span Made by <b><a target="_blank" href="https://github.com/jensstigaard">Jens Stigaard</a></b>
+      v-divider.mx-2(vertical)
+      small Inspiration from:
+      small
+        | <a target="_blank" href="https://forums.vmix.com/posts/t21233-vMatrix-audio-routing">thsorensen1</a>
+        | &amp;
+        | <a href="https://github.com/Haavard15/vMixAudioMatrix" target="_blank">Håvard Njåstad</a>
+  //- pre {{ inputs }}
 </template>
 
 <script lang="ts">
@@ -72,7 +82,7 @@ const sleep = (m: number) => new Promise((r) => setTimeout(r, m))
 })
 export default class App extends Vue {
   audioBusses: { [key: string]: any } = {}
-  allInputs: any[] = []
+  inputs: any[] = []
 
   tallyInfo: any | null = null
 
@@ -80,14 +90,14 @@ export default class App extends Vue {
 
   created() {
     // @ts-ignore
-    this.setVmixConnection(this.$store.state.vMixConnection.host, { debug: true })
+    this.setVmixConnection(this.$store.state.vMixConnection.host, { debug: false })
   }
 
   @Watch('$vMixConnection.connected')
   onConnectedChanged(val: boolean, oldval: boolean) {
     const isConnected = val
 
-    console.log('Connected changed', isConnected)
+    // console.log('Connected changed', isConnected)
 
     // If not connected anymore - do not attempt to send requests for XML data
     if (!isConnected) {
@@ -118,7 +128,16 @@ export default class App extends Vue {
           'title',
           'volume',
         ])
-      )
+      ).map((input: any, index: number) => {
+        const number = index + 1
+        return {
+          ...input,
+          number,
+          preview: this.tallyInfo && this.tallyInfo.program.includes(number),
+          program: this.tallyInfo && this.tallyInfo.preview.includes(number),
+          volumeBar: AudioUtility.fromVolume(input.volume).volumeBar(), // Percentage on volumebar scale
+        }
+      })
 
       // console.log(inputs)
       const audioBusses: { [key: string]: AudioBus } = _.keyBy(
@@ -133,7 +152,7 @@ export default class App extends Vue {
       )
 
       this.audioBusses = audioBusses
-      this.allInputs = inputs
+      this.inputs = inputs
     })
 
     this.xmlDataInterval = setInterval(() => {
@@ -160,31 +179,7 @@ export default class App extends Vue {
     console.log('New host', newHost)
 
     // @ts-ignore
-    this.setVmixConnection(newHost, { debug: true })
-  }
-
-  get inputs(): any {
-    const inputs = JSON.parse(JSON.stringify(this.allInputs)).map((input: any, index: number) => {
-      const number = index + 1
-      input.preview = false
-      input.program = false
-      return input
-    })
-
-    if (this.tallyInfo) {
-      this.tallyInfo.program
-        .filter((inputInProgram: number) => inputs.length >= inputInProgram)
-        .forEach((inputInProgram: number) => {
-          inputs[inputInProgram - 1].program = true
-        })
-      this.tallyInfo.preview
-        .filter((inputInPreview: number) => inputs.length >= inputInPreview)
-        .forEach((inputInPreview: number) => {
-          inputs[inputInPreview - 1].preview = true
-        })
-    }
-
-    return inputs
+    this.setVmixConnection(newHost, { debug: false })
   }
 }
 </script>
@@ -196,6 +191,14 @@ hr
 table#audio-matrix
   width: 100%
   table-layout: fixed
+
+  thead tr th
+    // Sticky table header
+    // https://algoart.fr/articles/css-table-fixed-header
+    position: sticky
+    z-index: 2
+    top: 50px
+    background: rgba(255, 255, 255, 0.9)
 
   thead tr th, tbody tr td
     border-bottom: 1px solid #DDD

@@ -3,9 +3,10 @@
 import { app, protocol, BrowserWindow, Menu } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
+import windowStateKeeper from 'electron-window-state'
 
 // VueX store
-import './store'
+import store from './store'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -19,15 +20,29 @@ protocol.registerSchemesAsPrivileged([
 ])
 
 function createWindow() {
+  // Remember window state
+  // https://github.com/mawie81/electron-window-state
+  const mainWindowState = windowStateKeeper({
+    defaultWidth: 900,
+    defaultHeight: 400,
+  })
+
   // Create the browser window.
   win = new BrowserWindow({
-    width: 860,
-    height: 380,
+    x: mainWindowState.x,
+    y: mainWindowState.y,
+    width: mainWindowState.width,
+    height: mainWindowState.height,
     webPreferences: {
       nodeIntegration: true,
       enableRemoteModule: true,
     },
   })
+
+  // Let us register listeners on the window, so we can update the state
+  // automatically (the listeners will be removed when the window is closed)
+  // and restore the maximized or full screen state
+  mainWindowState.manage(win)
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
@@ -95,3 +110,85 @@ if (isDevelopment) {
     })
   }
 }
+
+const isMac = process.platform === 'darwin'
+
+const template = [
+  // { role: 'appMenu' }
+  ...(isMac
+    ? [
+        {
+          label: app.name,
+          submenu: [
+            { role: 'about' },
+            { type: 'separator' },
+            { role: 'services' },
+            { type: 'separator' },
+            { role: 'hide' },
+            { role: 'hideothers' },
+            { role: 'unhide' },
+            { type: 'separator' },
+            { role: 'quit' },
+          ],
+        },
+        {
+          label: 'Features',
+          submenu: [
+            {
+              label: 'Toggle Audio Controls',
+              accelerator: process.platform === 'darwin' ? 'Alt+Cmd+A' : 'Ctrl+Shift+A',
+              click: async () => {
+                store.dispatch('toggleShowAudioControls')
+              },
+            },
+            { role: 'separator' },
+            { role: 'quit' },
+          ],
+        },
+      ]
+    : [
+        {
+          label: app.name,
+          submenu: [
+            {
+              label: 'Toggle Audio Controls',
+              accelerator: process.platform === 'darwin' ? 'Alt+Cmd+A' : 'Ctrl+Shift+A',
+              click: async () => {
+                store.dispatch('toggleShowAudioControls')
+              },
+            },
+            { type: 'separator' },
+            { role: 'quit' },
+          ],
+        },
+      ]),
+
+  {
+    label: 'View',
+    submenu: [
+      { type: 'separator' },
+      { role: 'reload' },
+      { role: 'forcereload' },
+      { role: 'toggledevtools' },
+      { type: 'separator' },
+      { role: 'resetzoom' },
+      { role: 'zoomin' },
+      { role: 'zoomout' },
+      { type: 'separator' },
+      { role: 'togglefullscreen' },
+    ],
+  },
+  {
+    label: 'Window',
+    submenu: [
+      { role: 'minimize' },
+      { role: 'zoom' },
+      ...(isMac
+        ? [{ type: 'separator' }, { role: 'front' }, { type: 'separator' }, { role: 'window' }]
+        : [{ role: 'close' }]),
+    ],
+  },
+]
+
+// @ts-ignore
+Menu.setApplicationMenu(Menu.buildFromTemplate(template))

@@ -38,8 +38,11 @@ In some cases it is convenient that the interface is as simple as possible, and 
 Use the shortcut `Cmd+Alt+I` (or the action in the app menu) to toggle visibility of vMix inputs without audio channels.
 This enables even simpler interface in case needed.
 
+### Custom bus labels
+Give each audio bus a custom label name to enable more convenience in controlling the audio busses and inputs of your production.
+
 ### Fixed header
-The fixed header ensures smooth operation even with many inputs in the vMix setup.
+The fixed header ensures faster operation even with many inputs in the vMix setup.
 
 ## Additional features
 Do you have a good idea for an additional feature for this app? Post a [new Issue](../../issues/new) or write me an email at <jens@stigaard.info>.

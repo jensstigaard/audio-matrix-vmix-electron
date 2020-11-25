@@ -27,11 +27,22 @@ In the app bar you can easily change the vMix host or IP address.
 It includes a dropdown menu with recently used hosts, so you can easily swap between hosts.
 
 ### Audio controls
-Simply audio controls for audio busses A-G including volume control and mute/unmute.
-You can also use the button in the app bar to toggle show/hide of the audio controls in case you want the interface as simple as possible, and only with the audio matrix.
+Simple audio controls for volume and mute/unmute for
+* audio busses A-G
+* inputs with audio
+
+Use the shortcut `Cmd+Alt+A` (or the action in the app menu) to toggle visibility of the audio controls.
+In some cases it is convenient that the interface is as simple as possible, and only with the audio matrix, without many disturbing controls.
+
+### Hide inputs without audio
+Use the shortcut `Cmd+Alt+I` (or the action in the app menu) to toggle visibility of vMix inputs without audio channels.
+This enables even simpler interface in case needed.
+
+### Fixed header
+The fixed header ensures smooth operation even with many inputs in the vMix setup.
 
 ## Additional features
-Do you have a good idea for an additional feature for this app? Post an Issue or write me an email at <jens@stigaard.info>.
+Do you have a good idea for an additional feature for this app? Post a [new Issue](../../issues/new) or write me an email at <jens@stigaard.info>.
 
 ## Known issues
  - Inputs without audio channels will appear in the interface, but any action will be ignored, since the input has no audio (Found by Dave Edwards - Thanks for the tip - It is a problem with the vMix API itself, and it is reported to vMix)

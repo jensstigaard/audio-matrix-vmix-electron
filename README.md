@@ -16,7 +16,12 @@ If you are interesting in similar apps, check out [Simple vMix switcher electron
 
 ## Downloads
 
-See the [**Releases**](../../releases) tab for a direct download of the app for Windows or Mac.
+### Latest version (1.0.0)
+[For MacOS](../../releases/download/1.0.0/Audio.Matrix.vMix.Electron-1.0.0.dmg)
+
+[For Windows](../../releases/download/1.0.0/Audio.Matrix.vMix.Electron.Setup.1.0.0.exe)
+
+Additionally see the [**Releases**](../../releases) tab for current and older released versions of the app.
 
 ## Features
 ### Intuitive interface

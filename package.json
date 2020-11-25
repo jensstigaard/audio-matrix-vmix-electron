@@ -1,6 +1,7 @@
 {
   "name": "audio-matrix-vmix-electron",
   "productName": "Audio Matrix vMix Electron",
+  "description": "Third-party Audio Matrix app to use as a utility for vMix",
   "version": "1.0.0",
   "private": true,
   "author": {
@@ -49,6 +50,7 @@
     "@vue/eslint-config-prettier": "^6.0.0",
     "@vue/eslint-config-typescript": "^7.0.0",
     "deepmerge": "^4.2.2",
+    "electron-builder-notarize": "^1.2.0",
     "electron-devtools-installer": "^3.1.1",
     "eslint": "^6.8.0",
     "eslint-plugin-prettier": "^3.1.4",

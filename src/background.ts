@@ -148,7 +148,7 @@ const template = [
                 store.dispatch('toggleShowInputsWithoutAudio')
               },
             },
-            { role: 'separator' },
+            { type: 'separator' },
             { role: 'quit' },
           ],
         },

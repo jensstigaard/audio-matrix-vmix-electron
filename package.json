@@ -33,7 +33,7 @@
     "vue-property-decorator": "^9.0.2",
     "vue-vmix-conn-plugin": "^1.0.5",
     "vuetify": "^2.3",
-    "vuex": "^3",
+    "vuex": "^3.6",
     "vuex-electron": "^1",
     "xpath": "^0.0.32"
   },

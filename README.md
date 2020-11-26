@@ -1,16 +1,12 @@
 # audio-matrix-vmix-electron
 [![Audio Matrix vMix Electron](https://img.shields.io/github/downloads/jensstigaard/audio-matrix-vmix-electron/total.svg)](../../releases)
 
+Audio Matrix for vMix is a simple app that connects to a vMix instance and presents a audio matrix including audio controls.
+The app is built on [ElectronJS](https://electronjs.org) which is a cross-platform framework enabling the app to be compiled to Windows, Mac and Linux.
 
-Simple Audio Matrix vMix app built with [ElectronJS](https://electronjs.org). ElectronJS is a cross-platform framework allowing the app to be built for each Windows, Mac or Linux. 
-
-The app is oriented for touch use.
+The app is oriented for touch use. It suits very well on a Microsoft Surface Pro PC or similar.
 
 ![Audio Matrix vMix Electron](./readme_assets/overview_050.png "Application overview")
-
-You are free to clone the repository to develop your own app based in this code.
-
-If you are interesting in similar apps, check out [Simple vMix switcher electron app](https://github.com/jensstigaard/simple-vmix-switcher-electron).
 
 -----
 
@@ -49,14 +45,24 @@ Give each audio bus a custom label name to enable more convenience in controllin
 ### Fixed header
 The fixed header ensures faster operation even with many inputs in the vMix setup.
 
-## Additional features
+## Feature requests
 Do you have a good idea for an additional feature for this app? Post a [new Issue](../../issues/new) or write me an email at <jens@stigaard.info>.
 
+## FOSS
+This repo is Free and Open Source Software based on MIT licensing.
+You are free to clone the repository to develop your own app based in this code.
+
+## Related projects
+If you are interesting in similar apps you can check out the following repos:
+
+* [Simple vMix switcher electron app](https://github.com/jensstigaard/simple-vmix-switcher-electron).
+
 ## Known issues
- - Inputs without audio channels will appear in the interface, but any action will be ignored, since the input has no audio (Found by Dave Edwards - Thanks for the tip - It is a problem with the vMix API itself, and it is reported to vMix)
+**Input with phantom audio channels**
+ Inputs without audio channels will appear in the interface by default, but any action using the audio controls will be ignored, since the input has no audio channels. This bug was found by Dave Edwards. Thanks for the tip. It is an issue with the vMix API itself, and it is reported to vMix, which hopefully will fix it in an upcoming vMix update.
 
 ## Inspiration from
-This project is inspired by 
+This project was inspired by
  * [vMatrix Audio Routing by thsorensen1](https://forums.vmix.com/posts/t21233-vMatrix-audio-routing)
  * [vMix Audio Matrix by Håvard Njåstad](https://github.com/Haavard15/vMixAudioMatrix)
 

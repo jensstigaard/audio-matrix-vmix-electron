@@ -13,9 +13,9 @@ The app is oriented for touch use. It suits very well on a Microsoft Surface Pro
 ## Downloads
 
 ### Latest version (1.0.0)
-[For MacOS](../../releases/download/1.0.0/Audio.Matrix.vMix.Electron-1.0.0.dmg)
+[For MacOS](../../releases/download/v1.0.0/Audio.Matrix.vMix.Electron-1.0.0.dmg)
 
-[For Windows](../../releases/download/1.0.0/Audio.Matrix.vMix.Electron.Setup.1.0.0.exe)
+[For Windows](../../releases/download/v1.0.0/Audio.Matrix.vMix.Electron.Setup.1.0.0.exe)
 
 Additionally see the [**Releases**](../../releases) tab for current and older released versions of the app.
 

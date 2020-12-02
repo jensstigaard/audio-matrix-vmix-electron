@@ -1,6 +1,7 @@
 # audio-matrix-vmix-electron
-[![Audio Matrix vMix Electron](https://img.shields.io/github/downloads/jensstigaard/audio-matrix-vmix-electron/total.svg)](../../releases)
+
 [![Audio Matrix vMix Electron](https://img.shields.io/github/v/release/jensstigaard/audio-matrix-vmix-electron.svg)](../../releases)
+[![Audio Matrix vMix Electron](https://img.shields.io/github/downloads/jensstigaard/audio-matrix-vmix-electron/total.svg)](../../releases)
 
 Audio Matrix for vMix is a simple app that connects to a vMix instance and presents a audio matrix including audio controls.
 The app is built on [ElectronJS](https://electronjs.org) which is a cross-platform framework enabling the app to be compiled to Windows, Mac and Linux.

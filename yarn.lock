@@ -6133,7 +6133,7 @@ node-releases@^1.1.70:
   resolved "https://registry.yarnpkg.com/node-releases/-/node-releases-1.1.71.tgz#cb1334b179896b1c89ecfdd4b725fb7bbdfc7dbb"
   integrity sha512-zR6HoT6LrLCRBwukmrVbHv0EpEQjksO6GmFcZQQuCAy139BEsoVKPYnf3jongYW83fAa1torLGYwxxky/p28sg==
 
-node-vmix@^1.3.3, node-vmix@^1.3.4:
+node-vmix@^1.3.4:
   version "1.3.4"
   resolved "https://registry.yarnpkg.com/node-vmix/-/node-vmix-1.3.4.tgz#4a931c1d735f3cce2a9119203a4e853f125fa773"
   integrity sha512-LvjTsxVQszIOT47cSsU+TdEZOJ4IUKw/6BV4vSZTj6HgcDqscA5aF7ejT+3otGlCFsedSFmluKwvz9PQCIHohw==
@@ -9450,7 +9450,7 @@ vue-template-es2015-compiler@^1.9.0:
   resolved "https://registry.yarnpkg.com/vue-template-es2015-compiler/-/vue-template-es2015-compiler-1.9.1.tgz#1ee3bc9a16ecbf5118be334bb15f9c46f82f5825"
   integrity sha512-4gDntzrifFnCEvyoO8PqyJDmguXgVPxKiIxrBKjIowvL9l+N66196+72XVYR8BBf1Uv1Fgt3bGevJ+sEmxfZzw==
 
-vue-vmix-conn-plugin@^1.0.5:
+vue-vmix-conn-plugin@^1.0.6:
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/vue-vmix-conn-plugin/-/vue-vmix-conn-plugin-1.0.6.tgz#3a5b18253abe9cfafa6c2972ff21b2cff90bc218"
   integrity sha512-N//crxqAaL45Bd/oLWReW7YLk0VS/EO1dBwW2J0VEyEo3JOZ9ANHsCvO3tdrzlyWk16MyV2GYmMZF7UobtKbww==

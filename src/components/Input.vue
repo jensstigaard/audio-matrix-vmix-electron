@@ -1,6 +1,7 @@
 <template lang="pug">
 tr
-  td(style='overflow:hidden;text-overflow:ellipsis')
+  // Title cell
+  td(style='overflow: hidden; text-overflow: ellipsis')
     div(:class='inputTitleClass') 
       v-icon.mr-5.mb-1(
         small,
@@ -15,8 +16,12 @@ tr
         span Unmute input
       v-btn.mx-2(icon, disabled, v-else-if='isInputMuted'): v-icon.red--text(small) fa-volume-mute
 
-      span(style='white-space:nowrap') {{ input.title }}
+      span(style='white-space: nowrap') {{ input.title }}
+
+  // Title number cell
   td: b {{ input.number }}
+
+  // Volume cell
   td(v-if='input.hasOwnProperty("volume")')
     .text-center(v-if='!showAudioControls') {{ Math.round(input.volume) }} %
     v-row.ma-0.pa-0(v-else, dense)
@@ -33,11 +38,15 @@ tr
         )
         //- :color='isInputMuted ? "grey lighten-1" : "primary"',
         //- :track-color='isInputMuted ? "grey" : "primary"',
+
+  // In case no audiobusses could be passed - fill with blank cell
   td.grey--text(
     v-if='!hasAudioBusses',
     :colspan='Object.values(audioBusses).length + 1',
-    style='text-align:center'
+    style='text-align: center'
   ) &mdash;
+
+  // Iterate through each audio bus
   td(v-else, v-for='bus in audioBusses')
     //- style="vertical-align:top"
     input-bus-button(:input='input', :bus='bus')
@@ -47,7 +56,6 @@ tr
 import _ from 'lodash'
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 
-import { AudioBus } from 'vmix-js-utils/dist/types/audio-bus'
 import InputBusButton from './InputBusButton.vue'
 
 const THROTTLE_RATE = 100

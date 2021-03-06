@@ -1,7 +1,7 @@
 {
   "name": "audio-matrix-vmix-electron",
   "productName": "Audio Matrix vMix Electron",
-  "description": "Third-party Audio Matrix app to use as a utility for vMix",
+  "description": "Third-party Audio Matrix app to use as utility for vMix",
   "version": "1.0.1",
   "private": true,
   "author": {
@@ -34,8 +34,7 @@
     "vue-vmix-conn-plugin": "^1.0.6",
     "vuetify": "^2.3",
     "vuex": "^3.6",
-    "vuex-electron": "^1",
-    "xpath": "^0.0.32"
+    "vuex-electron": "^1.0"
   },
   "devDependencies": {
     "@types/electron-devtools-installer": "^2.2.0",
@@ -60,7 +59,7 @@
     "lint-staged": "^10.5.1",
     "prettier": "^2.1.2",
     "pug": "^3.0.2",
-    "sass": "^1.29.0",
+    "sass": "^1.32.8",
     "sass-loader": "^10.1.0",
     "typescript": "~4.0.5",
     "vue-cli-plugin-electron-builder": "^2.0.0-rc.6",

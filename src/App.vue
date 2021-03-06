@@ -17,10 +17,11 @@ v-app
           //-   col(:span='audioBusses.length', style='width:50%')
           thead
             tr
-              th(style='width:30%') Input
-              th(style='width:40px') #
-              th(style='width:100px'): small Vol %
-              th(v-for='bus in audioBusses', style='width:100px')
+              th(style='width: 30%') Input
+              th(style='width: 40px') #
+              th(style='width: 100px'): small Vol
+              th(style='width: 100px'): small Gain
+              th(v-for='bus in audioBusses', style='width: 100px')
                 vmix-audio-bus(:bus='bus')
           tbody
             vmix-input(
@@ -46,33 +47,27 @@ v-app
 </template>
 
 <script lang="ts">
+// Libraries
+// Vue
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Watch } from 'vue-property-decorator'
 
-import {
-  AudioUtility,
-  XmlAudio,
-  XmlGeneralState,
-  XmlInputMapper,
-  XmlApiDataParser,
-  XmlOverlayChannels,
-  XmlTransitions,
-} from 'vmix-js-utils'
-
-import xpath, { SelectedValue } from 'xpath'
 import _ from 'lodash'
 
+// Vmix
+import { AudioUtility, XmlAudio, XmlInputMapper, XmlApiDataParser } from 'vmix-js-utils'
+
+// Types
+import { AudioBus } from 'vmix-js-utils/dist/types/audio-bus'
+
+// Components
 import AppBar from './AppBar.vue'
 import VmixAudioBus from './components/Bus.vue'
 import VmixInput from './components/Input.vue'
-import { AudioBus } from 'vmix-js-utils/dist/types/audio-bus'
 
+// Constants
 const FETCH_XML_DATA_INTERVAL: number = 500 // ms
-
-const LIMIT_NUMBER_OF_INPUTS: number = 8
-
-const sleep = (m: number) => new Promise((r) => setTimeout(r, m))
 
 @Component({
   components: {
@@ -128,6 +123,7 @@ export default class App extends Vue {
           'state',
           'title',
           'volume',
+          'gainDB',
         ])
       ).map((input: any, index: number) => {
         const number = index + 1
@@ -136,11 +132,13 @@ export default class App extends Vue {
           number,
           preview: this.tallyInfo && this.tallyInfo.program.includes(number),
           program: this.tallyInfo && this.tallyInfo.preview.includes(number),
-          volumeBar: AudioUtility.fromVolume(input.volume).volumeBar(), // Percentage on volumebar scale
+          // Volume - must be converted to percentage on volumebar scale from raw value
+          volumeBar: AudioUtility.fromVolume(input.volume).volumeBar(),
         }
       })
 
       // console.log(inputs)
+      // Parse audio busses
       const audioBusses: { [key: string]: AudioBus } = _.keyBy(
         Object.values(XmlAudio.all(xmlContent)).map((bus: AudioBus) => {
           return {
@@ -156,6 +154,7 @@ export default class App extends Vue {
       this.inputs = inputs
     })
 
+    // Interval to request XML state from vMix instance
     this.xmlDataInterval = setInterval(() => {
       // @ts-ignore
       this.$vMixConnection!.send('XML')
@@ -177,7 +176,7 @@ export default class App extends Vue {
   onHostChanged(val: string, oldval: string) {
     const newHost = val
 
-    console.log('New host', newHost)
+    // console.log('New host', newHost)
 
     // @ts-ignore
     this.setVmixConnection(newHost, { debug: false })
